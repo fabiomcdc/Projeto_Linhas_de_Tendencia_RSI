@@ -101,7 +101,7 @@ def fit_trendlines_single(data: np.array):
 
 
 
-def mapear_retas_com_bottoms(bottoms, retas, dist_min):
+def mapear_retas_com_bottoms(bottoms, retas, dist_min, num_pontos):
     mapeamento_suporte = pd.DataFrame(index=bottoms['bottom_idx'], columns=retas['indice'])
 
     # Preencher o DataFrame mapeamento
@@ -143,7 +143,7 @@ def mapear_retas_com_bottoms(bottoms, retas, dist_min):
                 elif valor == 1:
                     x_max = mapeamento_suporte.index[i]
                 elif valor == -1: # sequencia interrompida
-                    if zeros_consecutivos>= 3: # sequencia bem sucedida
+                    if zeros_consecutivos>= num_pontos: # sequencia bem sucedida
                         sucesso = True
                         if zeros_consecutivos > maior_zeros: # nova sequencia tem mais zeros
                             maior_zeros = zeros_consecutivos
@@ -154,7 +154,7 @@ def mapear_retas_com_bottoms(bottoms, retas, dist_min):
                     x_max = None
                     zeros_consecutivos = 0
         #verifica a última sequencia depois do loop"
-        if zeros_consecutivos >= 3: #verifica a última sequencia depois do loop"
+        if zeros_consecutivos >= num_pontos: #verifica a última sequencia depois do loop"
             sucesso = True
             if zeros_consecutivos > maior_zeros: # nova sequencia tem mais zeros
                 maior_zeros = zeros_consecutivos
@@ -175,7 +175,7 @@ def mapear_retas_com_bottoms(bottoms, retas, dist_min):
 
 
 
-def mapear_retas_com_tops(tops, retas, dist_min):
+def mapear_retas_com_tops(tops, retas, dist_min, num_pontos):
     mapeamento_resistencia = pd.DataFrame(index=tops['top_idx'], columns=retas['indice'])
 
     # Preencher o DataFrame mapeamento
@@ -217,7 +217,7 @@ def mapear_retas_com_tops(tops, retas, dist_min):
                 elif valor == -1:
                     x_max = mapeamento_resistencia.index[i]
                 elif valor == 1: # sequencia interrompida
-                    if zeros_consecutivos>= 3: # sequencia bem sucedida
+                    if zeros_consecutivos>= num_pontos: # sequencia bem sucedida
                         sucesso = True
                         if zeros_consecutivos > maior_zeros: # nova sequencia tem mais zeros
                             maior_zeros = zeros_consecutivos
@@ -228,7 +228,7 @@ def mapear_retas_com_tops(tops, retas, dist_min):
                     x_max = None
                     zeros_consecutivos = 0
         #verifica a última sequencia depois do loop"
-        if zeros_consecutivos >= 3: #verifica a última sequencia depois do loop"
+        if zeros_consecutivos >= num_pontos: #verifica a última sequencia depois do loop"
             sucesso = True
             if zeros_consecutivos > maior_zeros: # nova sequencia tem mais zeros
                 maior_zeros = zeros_consecutivos
