@@ -11,10 +11,8 @@ def compute_rsi(data, window):
     loss = (-delta.where(delta < 0, 0)).rolling(window=window).mean()
 
     gain_df = pd.DataFrame(gain)
-    
     loss_df = pd.DataFrame(loss)
     
-    print(loss)
     rs = gain / loss
     rsi = 100 - (100 / (1 + rs))
     return rsi

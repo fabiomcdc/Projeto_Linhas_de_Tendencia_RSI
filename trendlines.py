@@ -1,121 +1,160 @@
 import pandas as pd
 import numpy as np
+import math
 
-def check_trend_line(support: bool, pivot: int, slope: float, y: np.array):
-    # compute sum of differences between line and prices, 
-    # return negative val if invalid 
+def checar_acima_abaixo_da_linha(slope, pivot_x, pivot_y, df, acima: bool):
+
+    # Verifica se algum ponto de df está acima ou abaixo da linha definida por (pivot_x, pivot_y) e slope.
     
-    # Find the intercept of the line going through pivot point with given slope
-    intercept = -slope * pivot + y.iloc[pivot]
-    line_vals = slope * np.arange(len(y)) + intercept
-     
-    diffs = line_vals - y
+    intercept = pivot_y - pivot_x * slope
     
-    # Check to see if the line is valid, return -1 if it is not valid.
-    if support and diffs.max() > 1e-5:
-        return -1.0
-    elif not support and diffs.min() < -1e-5:
-        return -1.0
+    # Itera diretamente sobre as linhas do DataFrame
+    for index, row in df.iterrows():
+        x = row['top_bottom_idx']
+        y = row['top_bottom_value']
 
-    # Squared sum of diffs between data and line 
-    err = (diffs ** 2.0).sum()
-    return err
-
-
-def optimize_slope(support: bool, pivot:int , init_slope: float, y: np.array):
-    
-    # Amount to change slope by. Multiplyed by opt_step
-    slope_unit = (y.max() - y.min()) / len(y) 
-    
-    # Optmization variables
-    opt_step = 1.0
-    min_step = 0.0001
-    curr_step = opt_step # current step
-    
-    # Initiate at the slope of the line of best fit
-    best_slope = init_slope
-    best_err = check_trend_line(support, pivot, init_slope, y)
-    assert(best_err >= 0.0) # Shouldn't ever fail with initial slope
-
-    get_derivative = True
-    derivative = None
-    while curr_step > min_step:
-
-        if get_derivative:
-            # Numerical differentiation, increase slope by very small amount
-            # to see if error increases/decreases. 
-            # Gives us the direction to change slope.
-            slope_change = best_slope + slope_unit * min_step
-            test_err = check_trend_line(support, pivot, slope_change, y)
-            derivative = test_err - best_err;
-            
-            # If increasing by a small amount fails, 
-            # try decreasing by a small amount
-            if test_err < 0.0:
-                slope_change = best_slope - slope_unit * min_step
-                test_err = check_trend_line(support, pivot, slope_change, y)
-                derivative = best_err - test_err
-
-            if test_err < 0.0: # Derivative failed, give up
-                raise Exception("Derivative failed. Check your data. ")
-
-            get_derivative = False
-
-        if derivative > 0.0: # Increasing slope increased error
-            test_slope = best_slope - slope_unit * curr_step
-        else: # Increasing slope decreased error
-            test_slope = best_slope + slope_unit * curr_step
+        # Equação da reta: y = slope * (x - pivot_x) + pivot_y
+        y_on_line = intercept + slope * x
         
-
-        test_err = check_trend_line(support, pivot, test_slope, y)
-        if test_err < 0 or test_err >= best_err: 
-            # slope failed/didn't reduce error
-            curr_step *= 0.5 # Reduce step size
-        else: # test slope reduced error
-            best_err = test_err 
-            best_slope = test_slope
-            get_derivative = True # Recompute derivative
+        if int(x) != int(pivot_x):  # Evito compara com o próprio pivot
+            if acima and y_on_line - math.trunc(y * 10000) / 10000 > 0.01:
+                return False  # Se for linha de suporte e y estiver abaixo da linha, retorne False
+            elif not acima and y - math.trunc(y_on_line * 10000) / 10000 > 0.01:
+                return False  # Se for linha de resistência e y estiver acima da linha, retorne False
     
-    # Optimize done, return best slope and intercept
-    return (best_slope)
+    return True  # Se nenhum ponto estiver acima ou abaixo da linha conforme necessário, retorne True
 
-def fit_trendlines_single(data: np.array):
-    # Trendline de melhor fit (por least squared) 
-    # coefs[0] = slope,  coefs[1] = intercept
-    x = np.arange(len(data))
-    coefs = np.polyfit(x, data, 1)
+
+def rotacionar_ate_tocar(tops_bottoms_df, pivot_x, pivot_y, slope, direction, support: bool):
+
+    inclinacoes = []
+
+    # Percorrer todos os pontos do DataFrame e calcular as inclinações
+    for index, row in tops_bottoms_df.iterrows():
+        x = row['top_bottom_idx']
+        y = row['top_bottom_value']
+
+        # Calcular a inclinação da reta ligando o ponto pivot ao ponto atual
+        # Verificar se o divisor não é zero antes de calcular a inclinação
+        if x != pivot_x:
+            inclinacao = (y - pivot_y) / (x - pivot_x)
+        else:
+            inclinacao = slope
+
+        # Se estiver fazendo as retas de support (inferiores, support = True)...
+        if support:
+            # Se estiver procurando no sentido horário (direction = 1), preciso considerar
+            # as retas entre o pivot e  os outros mínimos que possuam inclinação MENOR (ou MAIS NEGATIVA)
+            # do que a inclinação da reta da regressão.
+            # Se o sentido for anti-horário (direction = 1), preciso considerar
+            # as retas entre o pivot e os outros mínimos que possuam inclinação MAIOR (ou MENOS NEGATIVA)
+            # do que a inclinação da reta da regressão.
+            if direction == 1:
+                if inclinacao < slope:
+                    inclinacoes.append(inclinacao)
+            else:
+                if inclinacao > slope:
+                    inclinacoes.append(inclinacao)
+        else:
+        # Se estiver fazendo as retas de resistência (superiores, support = False)...
+            # Se estiver procurando no sentido horário (direction = 1), preciso considerar
+            # as retas entre o pivot e  os outros mínimos que possuam inclinação MAIOR (ou MENOS NEGATIVA)
+            # do que a inclinação da reta da regressão.
+            # Se o sentido for anti-horário (direction = 1), preciso considerar
+            # as retas entre o pivot e os outros mínimos que possuam inclinação MENOR (ou MAIS NEGATIVA)
+            # do que a inclinação da reta da regressão.
+            if direction == 1:
+                if inclinacao > slope:
+                    inclinacoes.append(inclinacao)
+            else:
+                if inclinacao < slope:
+                    inclinacoes.append(inclinacao)
     
-    # Pontos do eixo y correspondentes a trendline fittada
-    line_points = coefs[0] * x + coefs[1]
+    # Se estiver procurando no sentido horário (direction = 1), preciso considerar primeiro
+    # as retas de MAIOR inclinação
+    if direction == 1:
+            inclinacoes.sort(reverse=True)
+    else:
+        # Se estiver procurando no sentido horário (direction = 1), preciso considerar primeiro
+        # as retas de MENOR inclinação
+            inclinacoes.sort(reverse=False)
 
-    # acha os índices do pontos chaves de máximo e de mínimo
-    upper_pivot = (data - line_points).argmax() 
-    lower_pivot = (data - line_points).argmin() 
+    # Percorrer as inclinações da maior para a menor
 
-    # Optimando a inclinação para as linhas de tendência
-    support_slope = optimize_slope(True, lower_pivot, coefs[0], data)
-    resist_slope = optimize_slope(False, upper_pivot, coefs[0], data)
+    # Se estiver fazendo as retas de support (inferiores, support = True) ...
+    # testo se os pontos de mínimo estão todos acima (parâmetro True)
+    if support:
+        for inclinacao in inclinacoes:
+            if checar_acima_abaixo_da_linha(inclinacao, pivot_x, pivot_y, tops_bottoms_df, True):
+                return inclinacao
+    else:
+        # Se estiver fazendo as retas de resistência (superiores, support = False)...
+        # testo se os pontos de mínimo estão todos abaixo (parâmetro False)
+        for inclinacao in inclinacoes:
+            if checar_acima_abaixo_da_linha(inclinacao, pivot_x, pivot_y, tops_bottoms_df, False):
+                return inclinacao
 
-    return (lower_pivot, support_slope, upper_pivot, resist_slope) 
+    return None
+        
+    # Se todas as inclinações passarem no teste, retornar a menor inclinação
+    return inclinacao_anterior
 
+
+
+
+def ajustar_linha_de_tendencia(data: np.array, borda_esquerda: int, tops_bottoms_df: pd.DataFrame, support: bool):
+
+    # Cria os índices relevantes apenas para os valores de top_bottom_idx
+    x_tops_bottoms = tops_bottoms_df['top_bottom_idx'].values
+
+    # Trendline de melhor fit (por least squares) usando todos os pontos de 'data'
+    x_full = np.arange(borda_esquerda, borda_esquerda + len(data))  # Índices para todos os dados
+    coefs = np.polyfit(x_full, data, 1)
+
+    # Pontos da linha de tendência (y) correspondentes aos valores de top_bottom_idx em tops_df e bottoms_df
+    line_points_tops_bottoms = coefs[0] * x_tops_bottoms + coefs[1]
+
+    # Calcular as diferenças entre line_points e top_bottom_value para os máximos
+
+    tops_bottoms_df = tops_bottoms_df.copy()
+
+    if support:
+        tops_bottoms_df.loc[:, 'diferenca'] = line_points_tops_bottoms - tops_bottoms_df['top_bottom_value']
+    else:
+        tops_bottoms_df.loc[:, 'diferenca'] = tops_bottoms_df['top_bottom_value'] - line_points_tops_bottoms
+
+
+    # Acha o máximo mais distante verticalmente da reta
+    pivot = tops_bottoms_df.loc[tops_bottoms_df['diferenca'].idxmax()]
+    pivot_y = tops_bottoms_df.loc[tops_bottoms_df['top_bottom_idx'] == pivot['top_bottom_idx'], 'top_bottom_value'].values[0]
+
+    # Agora, otimizando a inclinação para as linhas de tendência usando a rotação sentido horário e depois sentido anti horário
+    
+
+    slope_1 = rotacionar_ate_tocar(tops_bottoms_df, pivot['top_bottom_idx'], pivot_y, coefs[0], -1, support)
+
+    slope_2 = rotacionar_ate_tocar(tops_bottoms_df, pivot['top_bottom_idx'], pivot_y, coefs[0], 1, support)
+    
+    # retorna as duas retas criadas
+    return (pivot['top_bottom_idx'], pivot_y, slope_1, slope_2)
 
 
 
 def mapear_retas_com_bottoms(bottoms, retas, dist_min, num_pontos):
-    mapeamento_suporte = pd.DataFrame(index=bottoms['bottom_idx'], columns=retas['indice'])
+    mapeamento_suporte = pd.DataFrame(index=bottoms['top_bottom_idx'], columns=retas['indice'])
 
     # Preencher o DataFrame mapeamento
     for bottom in bottoms.itertuples():
         for reta in retas.itertuples():
-            valor_na_reta = bottom.bottom_idx * reta.support_slope + reta.support_intercept
-            distancia = bottom.bottom_price - valor_na_reta
+            valor_na_reta = bottom.top_bottom_idx * reta.support_slope + reta.support_intercept
+            distancia = bottom.top_bottom_value - valor_na_reta
 
             if abs(distancia) < dist_min:
-                mapeamento_suporte.at[bottom.bottom_idx, reta.indice] = 0
+                mapeamento_suporte.at[bottom.top_bottom_idx, reta.indice] = 0
             elif distancia < 0:
-                mapeamento_suporte.at[bottom.bottom_idx, reta.indice] = -1
+                mapeamento_suporte.at[bottom.top_bottom_idx, reta.indice] = -1
             else:
-                mapeamento_suporte.at[bottom.bottom_idx, reta.indice] = 1
+                mapeamento_suporte.at[bottom.top_bottom_idx, reta.indice] = 1
     
     mapeamento_suporte.to_csv('dados_csv_produzidos/maepamento_suporte.csv', index=True)
     
@@ -176,20 +215,20 @@ def mapear_retas_com_bottoms(bottoms, retas, dist_min, num_pontos):
 
 
 def mapear_retas_com_tops(tops, retas, dist_min, num_pontos):
-    mapeamento_resistencia = pd.DataFrame(index=tops['top_idx'], columns=retas['indice'])
+    mapeamento_resistencia = pd.DataFrame(index=tops['top_bottom_idx'], columns=retas['indice'])
 
     # Preencher o DataFrame mapeamento
     for top in tops.itertuples():
         for reta in retas.itertuples():
-            valor_na_reta = top.top_idx * reta.resist_slope + reta.resist_intercept
-            distancia = top.top_price - valor_na_reta
+            valor_na_reta = top.top_bottom_idx * reta.resist_slope + reta.resist_intercept
+            distancia = top.top_bottom_value - valor_na_reta
 
             if abs(distancia) < dist_min:
-                mapeamento_resistencia.at[top.top_idx, reta.indice] = 0
+                mapeamento_resistencia.at[top.top_bottom_idx, reta.indice] = 0
             elif distancia < 0:
-                mapeamento_resistencia.at[top.top_idx, reta.indice] = -1
+                mapeamento_resistencia.at[top.top_bottom_idx, reta.indice] = -1
             else:
-                mapeamento_resistencia.at[top.top_idx, reta.indice] = 1
+                mapeamento_resistencia.at[top.top_bottom_idx, reta.indice] = 1
 
     mapeamento_resistencia.to_csv('dados_csv_produzidos/maepamento_resistencia.csv', index=True)
 
@@ -248,7 +287,7 @@ def mapear_retas_com_tops(tops, retas, dist_min, num_pontos):
     return retas
 
 
-def identifica_retas_similares_suporte(df):
+def identificar_retas_similares_suporte(df):
     # Adiciona uma nova coluna para a reta similar
     df['reta_similar'] = np.nan
 
@@ -307,7 +346,7 @@ def identifica_retas_similares_suporte(df):
 
 
 
-def identifica_retas_similares_resistencia(df):
+def identificar_retas_similares_resistencia(df):
     # Adiciona uma nova coluna para a reta similar
     df['reta_similar'] = np.nan
 
@@ -362,3 +401,67 @@ def identifica_retas_similares_resistencia(df):
     df_consolidado = pd.DataFrame(retas_consolidadas)
 
     return df_consolidado
+
+
+# -------------------------------------------------------------------------
+# Rotinas que identificam cruzamento de uma linha de tendência
+# -------------------------------------------------------------------------
+
+#  Cruzamento para baixo
+
+def checar_cruzou_para_baixo(ind_pontos, slope_reta_suporte, intercept_reta_suporte, break_min, dados_rsi):
+    if len(ind_pontos) != 2:
+        raise ValueError("A lista ind_pontos deve conter exatamente dois pontos.")
+
+    x1, y1 = ind_pontos[0]
+    x2, y2 = ind_pontos[1]
+
+    # Calculando y na reta para os pontos x1 e x2
+    y_reta_1 = slope_reta_suporte * x1 + intercept_reta_suporte
+    y_reta_2 = slope_reta_suporte * x2 + intercept_reta_suporte
+
+    # Verificando se o primeiro ponto está acima da reta e o segundo abaixo
+    primeiro_acima = y1 > y_reta_1
+    segundo_abaixo_distante = y2 < y_reta_2 and abs(y2 - y_reta_2) > break_min
+
+    if primeiro_acima and segundo_abaixo_distante: # Ocorreu um cruzamento de x1 para x2, agora temos que achar primeiro ponto em que esse cruzamento ocorreu (x3)
+        # Procurar por x3 entre x1 e x2, começando do primeiro x maior do que x1, indo até x2
+        for x in range(int(x1) + 1, int(x2)):
+            y3 = dados_rsi.iloc[x]['RSI'] # Obtendo o valor de RSI correspondente ao x3 sendo testado => y3
+            y_reta_3 = slope_reta_suporte * x + intercept_reta_suporte # Obtendo o valor na reta correspondente ao x3 sendo testado => y_reta_3
+            if y3 < y_reta_3: # Se y3 < y_reta_3, é sinal que houve rompimento no ponto x3 sendo testado, interrompo o teste e retorno x e y3, caso contrário, continuo
+                return True, x, y3  # Retorna True e o primeiro x3 encontrado
+        return True, x2, y2  # Retorno criado para evitar mensagem de erro pois loop for deveria encontrar x3 válido, nem que seja igual a x2
+    else:
+        return False, None, None
+
+
+#  Cruzamento para cima
+
+def checar_cruzou_para_cima(ind_pontos, slope_reta_resistencia, intercept_reta_resistencia, break_min, dados_rsi):
+    if len(ind_pontos) != 2:
+        raise ValueError("A lista ind_pontos deve conter exatamente dois pontos.")
+
+    x1, y1 = ind_pontos[0]
+    x2, y2 = ind_pontos[1]
+
+    # Calculando y na reta para os pontos x1 e x2
+    y_reta_1 = slope_reta_resistencia * x1 + intercept_reta_resistencia
+    y_reta_2 = slope_reta_resistencia * x2 + intercept_reta_resistencia
+
+    # Verificando se o primeiro ponto está acima da reta e o segundo abaixo
+    
+    primeiro_abaixo = y1 < y_reta_1
+    segundo_acima_distante = y2 > y_reta_2 and abs(y2 - y_reta_2) > break_min
+
+    if primeiro_abaixo and segundo_acima_distante:
+        # Procurar por x3 entre x1 e x2, começando do primeiro x maior do que x1, indo até x2
+        for x in range(int(x1) + 1, int(x2)):
+            y3 = dados_rsi.iloc[x]['RSI'] # Obtendo o valor de RSI correspondente ao x3 sendo testado => y3
+            y_reta_3 = slope_reta_resistencia * x + intercept_reta_resistencia # Obtendo o valor na reta correspondente ao x3 sendo testado => y_reta_3
+            if y3 > y_reta_3: # Se y3 < y_reta_3, é sinal que houve rompimento no ponto x3 sendo testado, interrompo o teste e retorno x e y3, caso contrário, continuo
+                return True, x, y3  # Retorna True e o primeiro x3 encontrado
+        return True, x2, y2  # Retorno criado para evitar mensagem de erro pois loop for deveria encontrar x3 válido, nem que seja igual a x2
+    else:
+        return False, None, None
+
