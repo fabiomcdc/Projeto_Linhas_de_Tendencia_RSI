@@ -1,0 +1,2 @@
+;janela_rsi;ordem;lookback;d_max;num_pontos;break_min;ppt;sl;pt;ativo;return_ann;sharpe_ratio;max_drawdown;trades;Pontos_return_ann;Pontos_sharpe_ratio;Pontos_max_drawdown;Pontos_trades;Pontos_ponderados
+60;28;3;80;2;3;4;6;0,02;0,05;CMI;16,452909844718313;1,0660047507676116;-10,824890674970844;29,4;8,128528922486865;10,0;10,0;10,0;9,197940966780084

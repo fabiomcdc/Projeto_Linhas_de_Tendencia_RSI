@@ -156,7 +156,7 @@ def mapear_retas_com_bottoms(bottoms, retas, dist_min, num_pontos):
             else:
                 mapeamento_suporte.at[bottom.top_bottom_idx, reta.indice] = 1
     
-    mapeamento_suporte.to_csv('dados_csv_produzidos/maepamento_suporte.csv', index=True)
+    # mapeamento_suporte.to_csv('dados_csv_produzidos/maepamento_suporte.csv', index=True)
     
     # Avaliar cada reta
     num_reta = 0
@@ -209,7 +209,7 @@ def mapear_retas_com_bottoms(bottoms, retas, dist_min, num_pontos):
         retas.loc[retas['indice'] == coluna, 'x_max'] = x_max_final
         retas.loc[retas['indice'] == coluna, 'num_zeros'] = maior_zeros
 
-    retas.to_csv('dados_csv_produzidos/retas_suporte.csv', index=True)
+    # retas.to_csv('dados_csv_produzidos/retas_suporte.csv', index=True)
     return retas
 
 
@@ -230,7 +230,7 @@ def mapear_retas_com_tops(tops, retas, dist_min, num_pontos):
             else:
                 mapeamento_resistencia.at[top.top_bottom_idx, reta.indice] = 1
 
-    mapeamento_resistencia.to_csv('dados_csv_produzidos/maepamento_resistencia.csv', index=True)
+    # mapeamento_resistencia.to_csv('dados_csv_produzidos/maepamento_resistencia.csv', index=True)
 
     # Avaliar cada reta
     num_reta = 0
@@ -283,7 +283,7 @@ def mapear_retas_com_tops(tops, retas, dist_min, num_pontos):
         retas.loc[retas['indice'] == coluna, 'x_max'] = x_max_final
         retas.loc[retas['indice'] == coluna, 'num_zeros'] = maior_zeros
 
-    retas.to_csv('dados_csv_produzidos/retas_resistencia.csv', index=True)
+    # retas.to_csv('dados_csv_produzidos/retas_resistencia.csv', index=True)
     return retas
 
 

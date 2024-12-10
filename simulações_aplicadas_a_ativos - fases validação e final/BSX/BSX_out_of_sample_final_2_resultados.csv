@@ -1,0 +1,2 @@
+;janela_rsi;ordem;lookback;d_max;num_pontos;break_min;ppt;sl;pt;ativo;start_date;end_date;final_balance;return_acum;return_ann;sharpe_ratio;sortino_ratio;volatility;max_drawdown;trades;win_rate;profit_factor;avg_trade_return
+0;49;3;60;2;3;4;6;0,02;0,07;BSX;2021-09-18;2024-11-01;15366413,283466162;53,66413283466163;11,885051674969738;0,84004653440761;1,4942832378093436;14,148087264416754;-13,228105998501205;23;60,86956521739131;2,6679973022892063;1,8853779544617533

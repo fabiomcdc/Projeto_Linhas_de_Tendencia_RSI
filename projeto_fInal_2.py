@@ -38,15 +38,15 @@ from calcula_RSI import compute_rsi
 # ---------------------------------------------------------------------
 
 # janela_rsi determina o número de amostras sobre os quais o RSI é calculado
-janela_rsi = 21
+janela_rsi = 28
 
 # ordem determina quantos pontos à direita e à esquerda examinamos para determina pontos de máximo (tops) e mínimos (bottoms) locais
-ordem = 3
+ordem = 4
 
 # lookback determina o tamanho da janela de inspeção que será usada para encontrar as linhas de tendências
-lookback1 = 40
-lookback2 = 100
-lookback3 = 200
+lookback1 = 50
+lookback2 = 90
+lookback3 = 120
 lookback4 = 300
 
 # distancia_maxima determina a distancia máxima na vertical que uma linha deve passar para considerar que passou pelo ponto
@@ -56,14 +56,14 @@ distancia_maxima = 3
 num_pontos = 3
 
 # break_min determina a distãncia mínima na vertical do ropomimento para uma reta ser considerada rompida
-break_min = 4
+break_min = 3
 
 # pontos_para_tras determina quantos pontos para trás eu checo o rompimento
 pontos_para_tras = 6
 
 # sl = stop loss e pt = profit taking
-sl = -0.02
-pt = 0.06
+sl_val = 0.02
+pt_val = 0.04
 
 # datas do intervalo sendo avaliado
 start_date = "2000-01-01"
@@ -86,15 +86,15 @@ end_date = "2004-12-31"
 # 5  = DAX
 # 6 = Nikkei 225
 
-ind_indice = 2
+ind_indice = 5
 
 indices = {
     1: "BTC-USD",    # Ticker para Bitcoin
     2: "^BVSP",      # Ticker para Ibovespa
     3: "^GSPC",      # Ticker para S&P 500
-    4: "^FTSE",      # Ticker para FTSE All Share
-    5: "^GDAXI",     # Ticker para DAX
-    6: "^N225"       # Ticker para Nikkei 225
+    4: "AAPL",      # Ticker para AAPL
+    5: "JPY=X",     # Ticker para YEN
+    6: "BRL=X"       # Ticker para BRL
 }
 
 aplicar_log = False
@@ -185,75 +185,73 @@ idx = data.index
 
 # ---------------------- Início de código para geração de gráfico auxiliar, comentado para performance ----------------------
 
-# #-----------------------------------------------------------------------   
-# # Plotando o as linhas de sobrecompra (RSI = 70) e sobrevenda (RSI = 30)
-# #-----------------------------------------------------------------------   
+#-----------------------------------------------------------------------   
+# Plotando o as linhas de sobrecompra (RSI = 70) e sobrevenda (RSI = 30)
+#-----------------------------------------------------------------------   
 
-# plt.style.use('default')
-# fig, (ax1, ax3) = plt.subplots(2, sharex=True, gridspec_kw={'height_ratios': [2, 1]})
+plt.style.use('default')
+fig, (ax1, ax3) = plt.subplots(2, sharex=True, gridspec_kw={'height_ratios': [2, 1]})
 
-# #----------------------------------------------------------------   
-# # Plotando o preço de fechamento
-# #----------------------------------------------------------------   
+#----------------------------------------------------------------   
+# Plotando o preço de fechamento
+#----------------------------------------------------------------   
 
-# data['Close'].plot(ax=ax1, color='blue', label=ticker_clean + ' Close Price', linewidth = 0.4)
+data['Close'].plot(ax=ax1, color='blue', label=ticker_clean + ' Close Price', linewidth = 0.4)
 
-# #----------------------------------------------------------------   
-# # Plotando o RSI
-# #----------------------------------------------------------------   
+#----------------------------------------------------------------   
+# Plotando o RSI
+#----------------------------------------------------------------   
 
-# data['RSI'].plot(ax=ax3, color='purple', label='RSI', linewidth = 0.5)
+data['RSI'].plot(ax=ax3, color='purple', label='RSI', linewidth = 0.5)
 
-# #-----------------------------------------------------------------------   
-# # Plotando o as linhas de sobrecompra (RSI = 70) e sobrevenda (RSI = 30)
-# #-----------------------------------------------------------------------
+#-----------------------------------------------------------------------   
+# Plotando o as linhas de sobrecompra (RSI = 70) e sobrevenda (RSI = 30)
+#-----------------------------------------------------------------------
    
-# ax3.axhline(70, color='gray', linestyle='--', linewidth = 0.4)  # Linha de sobrecompra
-# ax3.axhline(30, color='gray', linestyle='--', linewidth = 0.4)  # Linha de sobrevenda
+ax3.axhline(70, color='gray', linestyle='--', linewidth = 0.4)  # Linha de sobrecompra
+ax3.axhline(30, color='gray', linestyle='--', linewidth = 0.4)  # Linha de sobrevenda
 
-# plt.legend()
-# ax1.set_title(ticker_clean + " and RSI", color='black', fontsize=8)
-# ax1.legend(loc='upper left', fontsize=6)
-# ax3.legend(loc='upper left', fontsize=6)
-# ax3.set_ylim([0, 100])  # O RSI varia de 0 a 100
+plt.legend()
+ax1.set_title(ticker_clean + " and RSI", color='black', fontsize=8)
+ax1.legend(loc='upper left', fontsize=6)
+ax3.legend(loc='upper left', fontsize=6)
+ax3.set_ylim([0, 100])  # O RSI varia de 0 a 100
 
-# # ----------------------------------------------------------------   
-# # Plotar os topos e fundos no gráfico
-# # ----------------------------------------------------------------
+# ----------------------------------------------------------------   
+# Plotar os topos e fundos no gráfico
+# ----------------------------------------------------------------
 
-# for top in tops_df.itertuples():
-#     # Plotar cada topo no gráfico RSI usando a data correspondente
-#     ax3.plot(idx[top.top_bottom_idx], data['RSI'][top.top_bottom_idx], marker='o', color='green', markersize=1)
+for top in tops_df.itertuples():
+    # Plotar cada topo no gráfico RSI usando a data correspondente
+    ax3.plot(idx[top.top_bottom_idx], data['RSI'][top.top_bottom_idx], marker='o', color='green', markersize=1)
 
-# for bottom in bottoms_df.itertuples():
-#     # Plotar cada fundo no gráfico RSI usando a data correspondente
-#     ax3.plot(idx[bottom.top_bottom_idx], data['RSI'][bottom.top_bottom_idx], marker='o', color='red', markersize=1)
+for bottom in bottoms_df.itertuples():
+    # Plotar cada fundo no gráfico RSI usando a data correspondente
+    ax3.plot(idx[bottom.top_bottom_idx], data['RSI'][bottom.top_bottom_idx], marker='o', color='red', markersize=1)
 
-# # ----------------------------------------------------------------
-# # Ajustando o título e diminuir o tamanho da fonte
-# # ----------------------------------------------------------------
+# ----------------------------------------------------------------
+# Ajustando o título e diminuir o tamanho da fonte
+# ----------------------------------------------------------------
 
-# ax1.set_title(ticker_clean + " and RSI", color='black', fontsize=8)
+ax1.set_title(ticker_clean + " and RSI", color='black', fontsize=8)
 
-# # ----------------------------------------------------------------
-# # Reduzindo o tamanho da fonte dos valores da escala
-# # ----------------------------------------------------------------
+# ----------------------------------------------------------------
+# Reduzindo o tamanho da fonte dos valores da escala
+# ----------------------------------------------------------------
 
-# ax1.tick_params(axis='both', which='major', labelsize=6)  # Tamanho da fonte dos ticks de ax1
-# ax3.tick_params(axis='both', which='major', labelsize=6)  # Tamanho da fonte dos ticks de ax3
+ax1.tick_params(axis='both', which='major', labelsize=6)  # Tamanho da fonte dos ticks de ax1
+ax3.tick_params(axis='both', which='major', labelsize=6)  # Tamanho da fonte dos ticks de ax3
 
-# # ----------------------------------------------------------------
-# # Salvando e plotando
-# # ----------------------------------------------------------------
+# ----------------------------------------------------------------
+# Salvando e plotando
+# ----------------------------------------------------------------
 
-# file_name = f'graficos_gerados/mínimos_máximos_{ticker_clean}.png'
-# fig.savefig(file_name, dpi=300)  # Salva a figura como um arquivo PNG com alta resolução
+file_name = f'graficos_gerados/mínimos_máximos_{ticker_clean}.png'
+fig.savefig(file_name, dpi=300)  # Salva a figura como um arquivo PNG com alta resolução
 
-# plt.show()
+plt.show()
 
 # ---------------------- Fim de código para geração de gráfico auxiliar, comentado para performance ----------------------
-
-
 
 # ---------------------------------------------------------------------
 # Construção das retas de suporte para as janelas de observação
@@ -272,42 +270,43 @@ colunas_suporte     = ['indice', 'indice_original_lower_pivot', 'valor_rsi', 'su
 
 trendlines_suporte_df = pd.DataFrame(columns=colunas_suporte)
 
-# for x in [lookback1, lookback2, lookback3, lookback4]:
-for x in [lookback1]:
+for x in [lookback1, lookback2, lookback3]:
+# for x in [lookback1]:
     lookback = x
     borda_esquerda = bottoms_df['top_bottom_idx'].iloc[0]-ordem
     while borda_esquerda + lookback < len(rsi_values):
     
         subset_tops_df = bottoms_df[(bottoms_df['top_bottom_idx'] >= borda_esquerda) & (bottoms_df['top_bottom_idx'] <= borda_esquerda+lookback-ordem)]
 
-        # Chamar a função ajustar_linha_de_tendencia para a janela sendo avaliada
-        lower_pivot, lower_pivot_y, suport_slope_1, suport_slope_2 = ajustar_linha_de_tendencia(rsi_values[borda_esquerda:borda_esquerda+lookback], borda_esquerda, subset_tops_df, True)
-        
-        if suport_slope_1 != None:     
-            nova_linha_suporte_1 = {
-                'indice': contador_janela,
-                'indice_original_lower_pivot': lower_pivot,
-                'valor_rsi': lower_pivot_y,
-                'support_slope': suport_slope_1,
-                'support_intercept':lower_pivot_y - lower_pivot * suport_slope_1,
-                'inicio_janela': borda_esquerda,
-                'fim_janela':borda_esquerda + lookback - 1
-            }
-            trendlines_suporte_df = trendlines_suporte_df._append(nova_linha_suporte_1, ignore_index=True)      
-            contador_janela += 1
+        if not subset_tops_df.empty:
+            # Chamar a função ajustar_linha_de_tendencia para a janela sendo avaliada
+            lower_pivot, lower_pivot_y, suport_slope_1, suport_slope_2 = ajustar_linha_de_tendencia(rsi_values[borda_esquerda:borda_esquerda+lookback], borda_esquerda, subset_tops_df, True)
+            
+            if suport_slope_1 != None:   
+                nova_linha_suporte_1 = {
+                    'indice': contador_janela,
+                    'indice_original_lower_pivot': lower_pivot,
+                    'valor_rsi': lower_pivot_y,
+                    'support_slope': suport_slope_1,
+                    'support_intercept':lower_pivot_y - lower_pivot * suport_slope_1,
+                    'inicio_janela': borda_esquerda,
+                    'fim_janela':borda_esquerda + lookback - 1
+                }
+                trendlines_suporte_df = trendlines_suporte_df._append(nova_linha_suporte_1, ignore_index=True)      
+                contador_janela += 1
 
-        if suport_slope_2 != None:
-            nova_linha_suporte_2 = {
-                'indice': contador_janela,
-                'indice_original_lower_pivot': lower_pivot,
-                'valor_rsi': lower_pivot_y,
-                'support_slope': suport_slope_2,
-                'support_intercept':lower_pivot_y - lower_pivot * suport_slope_2,
-                'inicio_janela': borda_esquerda,
-                'fim_janela':borda_esquerda + lookback - 1
-            }
-            trendlines_suporte_df = trendlines_suporte_df._append(nova_linha_suporte_2, ignore_index=True)        
-            contador_janela += 1     
+            if suport_slope_2 != None:
+                nova_linha_suporte_2 = {
+                    'indice': contador_janela,
+                    'indice_original_lower_pivot': lower_pivot,
+                    'valor_rsi': lower_pivot_y,
+                    'support_slope': suport_slope_2,
+                    'support_intercept':lower_pivot_y - lower_pivot * suport_slope_2,
+                    'inicio_janela': borda_esquerda,
+                    'fim_janela':borda_esquerda + lookback - 1
+                }
+                trendlines_suporte_df = trendlines_suporte_df._append(nova_linha_suporte_2, ignore_index=True)        
+                contador_janela += 1     
         
         try:
             proximo_esquerda = bottoms_df.loc[bottoms_df['top_bottom_idx'].gt(borda_esquerda), 'top_bottom_idx'].min()
@@ -351,8 +350,8 @@ resist_slope = [np.nan] * len(rsi_values)
 colunas_resistencia = ['indice', 'indice_original_upper_pivot','valor_rsi', 'resist_slope', 'resist_intercept', 'inicio_janela', 'fim_janela']
 trendlines_resistencia_df = pd.DataFrame(columns=colunas_resistencia)
 
-# for x in [lookback1, lookback2, lookback3, lookback4]:
-for x in [lookback1]:
+for x in [lookback1, lookback2, lookback3]:
+# for x in [lookback1]:
     lookback = x
     borda_esquerda = tops_df['top_bottom_idx'].iloc[0] - ordem # Começa no primeiro máximo local
     while borda_esquerda + lookback < len(rsi_values):
@@ -360,40 +359,42 @@ for x in [lookback1]:
         # Fatia os tops e mínimos locais conforme a janela
         subset_tops_df = tops_df[(tops_df['top_bottom_idx'] >= borda_esquerda) & (tops_df['top_bottom_idx'] <= borda_esquerda+lookback)]
 
-        # Chamar a função ajustar_linha_de_tendencia para a janela sendo avaliada
-        upper_pivot, upper_pivot_y, resist_slope_1, resist_slope_2 = ajustar_linha_de_tendencia(rsi_values[borda_esquerda:borda_esquerda+lookback], borda_esquerda, subset_tops_df, False)
-        
-        if resist_slope_1 != None:
+        if not subset_tops_df.empty:
             
-            nova_linha_resistencia_1 = {
-                'indice': contador_janela,
-                'indice_original_upper_pivot': upper_pivot,
-                'valor_rsi': upper_pivot_y,
-                'resist_slope': resist_slope_1,
-                'resist_intercept':upper_pivot_y - upper_pivot * resist_slope_1,
-                'inicio_janela': borda_esquerda,
-                'fim_janela':borda_esquerda + lookback - 1
-            }
-            trendlines_resistencia_df = trendlines_resistencia_df._append(nova_linha_resistencia_1, ignore_index=True)
-
+            # Chamar a função ajustar_linha_de_tendencia para a janela sendo avaliada
+            upper_pivot, upper_pivot_y, resist_slope_1, resist_slope_2 = ajustar_linha_de_tendencia(rsi_values[borda_esquerda:borda_esquerda+lookback], borda_esquerda, subset_tops_df, False)
             
-            contador_janela += 1
+            if resist_slope_1 != None:
+                
+                nova_linha_resistencia_1 = {
+                    'indice': contador_janela,
+                    'indice_original_upper_pivot': upper_pivot,
+                    'valor_rsi': upper_pivot_y,
+                    'resist_slope': resist_slope_1,
+                    'resist_intercept':upper_pivot_y - upper_pivot * resist_slope_1,
+                    'inicio_janela': borda_esquerda,
+                    'fim_janela':borda_esquerda + lookback - 1
+                }
+                trendlines_resistencia_df = trendlines_resistencia_df._append(nova_linha_resistencia_1, ignore_index=True)
 
-        if resist_slope_2 != None:    
-            nova_linha_resistencia_2 = {
-                'indice': contador_janela,
-                'indice_original_upper_pivot': upper_pivot,
-                'valor_rsi': upper_pivot_y,
-                'resist_slope': resist_slope_2,
-                'resist_intercept':upper_pivot_y - upper_pivot * resist_slope_2,
-                'inicio_janela': borda_esquerda,
-                'fim_janela':borda_esquerda + lookback - 1
-            }
-            trendlines_resistencia_df = trendlines_resistencia_df._append(nova_linha_resistencia_2, ignore_index=True)
+                
+                contador_janela += 1
 
-            contador_janela += 1
+            if resist_slope_2 != None:    
+                nova_linha_resistencia_2 = {
+                    'indice': contador_janela,
+                    'indice_original_upper_pivot': upper_pivot,
+                    'valor_rsi': upper_pivot_y,
+                    'resist_slope': resist_slope_2,
+                    'resist_intercept':upper_pivot_y - upper_pivot * resist_slope_2,
+                    'inicio_janela': borda_esquerda,
+                    'fim_janela':borda_esquerda + lookback - 1
+                }
+                trendlines_resistencia_df = trendlines_resistencia_df._append(nova_linha_resistencia_2, ignore_index=True)
 
-        # 5Rola a janela a maior distância possível até pegar o próximo máximo
+                contador_janela += 1
+
+            # 5Rola a janela a maior distância possível até pegar o próximo máximo
 
         try:
             proximo_esquerda = tops_df.loc[tops_df['top_bottom_idx'].gt(borda_esquerda), 'top_bottom_idx'].min()
@@ -424,136 +425,134 @@ trendlines_resistencia_df.to_csv('dados_csv_produzidos/trendlines_iniciais/trend
 
 # ---------------------- Início de código para geração de gráfico auxiliar, comentado para performance ----------------------
 
-# plt.style.use('default')
-# fig, (ax1, ax3) = plt.subplots(2, sharex=True, gridspec_kw={'height_ratios': [2, 1]})
+plt.style.use('default')
+fig, (ax1, ax3) = plt.subplots(2, sharex=True, gridspec_kw={'height_ratios': [2, 1]})
 
-# # ----------------------------------------------------------------   
-# # Plotando o preço de fechamento
-# # ----------------------------------------------------------------   
+# ----------------------------------------------------------------   
+# Plotando o preço de fechamento
+# ----------------------------------------------------------------   
 
-# data['Close'].plot(ax=ax1, color='blue', label=ticker_clean + ' Close Price', linewidth = 0.4)
+data['Close'].plot(ax=ax1, color='blue', label=ticker_clean + ' Close Price', linewidth = 0.4)
 
-# # ----------------------------------------------------------------   
-# # Plotando o RSI
-# # ----------------------------------------------------------------   
+# ----------------------------------------------------------------   
+# Plotando o RSI
+# ----------------------------------------------------------------   
 
-# data['RSI'].plot(ax=ax3, color='purple', label='RSI', linewidth = 0.5)
+data['RSI'].plot(ax=ax3, color='purple', label='RSI', linewidth = 0.5)
 
-# # ----------------------------------------------------------------   
-# # Plotando o as linhas de sobrecompra (RSI = 70) e sobrevenda (RSI = 30)
-# # ----------------------------------------------------------------   
-# ax3.axhline(70, color='gray', linestyle='--', linewidth = 0.4)  # Linha de sobrecompra
-# ax3.axhline(30, color='gray', linestyle='--', linewidth = 0.4)  # Linha de sobrevenda
+# ----------------------------------------------------------------   
+# Plotando o as linhas de sobrecompra (RSI = 70) e sobrevenda (RSI = 30)
+# ----------------------------------------------------------------   
+ax3.axhline(70, color='gray', linestyle='--', linewidth = 0.4)  # Linha de sobrecompra
+ax3.axhline(30, color='gray', linestyle='--', linewidth = 0.4)  # Linha de sobrevenda
 
-# plt.legend()
-# ax1.set_title(ticker_clean + " and RSI", color='black', fontsize=8)
-# ax1.legend(loc='upper left', fontsize=6)
-# ax3.legend(loc='upper left', fontsize=6)
-# ax3.set_ylim([0, 100])  # O RSI varia de 0 a 100
+plt.legend()
+ax1.set_title(ticker_clean + " and RSI", color='black', fontsize=8)
+ax1.legend(loc='upper left', fontsize=6)
+ax3.legend(loc='upper left', fontsize=6)
+ax3.set_ylim([0, 100])  # O RSI varia de 0 a 100
 
-# # ----------------------------------------------------------------   
-# # Plotando os topos e fundos no gráfico
-# # ----------------------------------------------------------------   
+# ----------------------------------------------------------------   
+# Plotando os topos e fundos no gráfico
+# ----------------------------------------------------------------   
 
-# for top in tops_df.itertuples():
-#     # Plotar cada topo no gráfico RSI usando a data correspondente
-#     ax3.plot(idx[top.top_bottom_idx], data['RSI'][top.top_bottom_idx], marker='o', color='green', markersize=0.5)
+for top in tops_df.itertuples():
+    # Plotar cada topo no gráfico RSI usando a data correspondente
+    ax3.plot(idx[top.top_bottom_idx], data['RSI'][top.top_bottom_idx], marker='o', color='green', markersize=0.5)
 
-# for bottom in bottoms_df.itertuples():
-#     # Plotar cada fundo no gráfico RSI usando a data correspondente
-#     ax3.plot(idx[bottom.top_bottom_idx], data['RSI'][bottom.top_bottom_idx], marker='o', color='red', markersize=0.5)
+for bottom in bottoms_df.itertuples():
+    # Plotar cada fundo no gráfico RSI usando a data correspondente
+    ax3.plot(idx[bottom.top_bottom_idx], data['RSI'][bottom.top_bottom_idx], marker='o', color='red', markersize=0.5)
 
-# # ----------------------------------------------------------------
-# # Ajustando o título e diminuir o tamanho da fonte
-# # ----------------------------------------------------------------
-# ax1.set_title(ticker_clean + " and RSI", color='black', fontsize=8)
+# ----------------------------------------------------------------
+# Ajustando o título e diminuir o tamanho da fonte
+# ----------------------------------------------------------------
+ax1.set_title(ticker_clean + " and RSI", color='black', fontsize=8)
 
-# # ----------------------------------------------------------------
-# # Reduzindo o tamanho da fonte dos valores da escala
-# # ----------------------------------------------------------------
-# ax1.tick_params(axis='both', which='major', labelsize=6)  # Tamanho da fonte dos ticks de ax1
-# ax3.tick_params(axis='both', which='major', labelsize=6)  # Tamanho da fonte dos ticks de ax3
-
-
-# # Obtendo as datas associadas aos valores do RSI
-# datas = data.index[len(data.index) - len(rsi_values):]
-
-# # ----------------------------------------------------------------   
-# # Plotando as retas de suporte do RSI
-# # ----------------------------------------------------------------   
-
-# for i in range(len(trendlines_suporte_df)):
-#     row = trendlines_suporte_df.iloc[i]
-
-#     x_start = int(row['inicio_janela'])
-#     y_start = row['support_slope'] * x_start + row['support_intercept']
-
-#     # Ajustar y_start se necessário
-#     if y_start < 0:
-#         x_start = max(0, min(len(datas) - 1, int(-row['support_intercept'] / row['support_slope'])))
-#         y_start = row['support_slope'] * x_start + row['support_intercept']
-
-#     x_end = int(row['fim_janela'])
-#     y_end = row['support_slope'] * x_end + row['support_intercept']
-
-#     # Ajustar y_end se necessário
-#     if y_end < 0:
-#         x_end = max(0, min(len(datas) - 1, int(-row['support_intercept'] / row['support_slope'])))
-#         y_end = row['support_slope'] * x_end + row['support_intercept']
-
-#     # Obter datas de início e fim
-#     data_start = datas[x_start]
-#     data_end = datas[x_end]
-
-#     # Desenhar o segmento de reta
-#     ax3.plot([data_start, data_end], [y_start, y_end], color='r', linewidth=0.4)
+# ----------------------------------------------------------------
+# Reduzindo o tamanho da fonte dos valores da escala
+# ----------------------------------------------------------------
+ax1.tick_params(axis='both', which='major', labelsize=6)  # Tamanho da fonte dos ticks de ax1
+ax3.tick_params(axis='both', which='major', labelsize=6)  # Tamanho da fonte dos ticks de ax3
 
 
-# # Obtendo as datas associadas aos valores do RSI
-# datas = data.index[len(data.index) - len(rsi_values):]
+# Obtendo as datas associadas aos valores do RSI
+datas = data.index[len(data.index) - len(rsi_values):]
 
-# # ----------------------------------------------------------------   
-# # Plotando as retas de suporte do RSI
-# # ----------------------------------------------------------------   
+# ----------------------------------------------------------------   
+# Plotando as retas de suporte do RSI
+# ----------------------------------------------------------------   
 
-# for i in range(len(trendlines_resistencia_df)):
-#     row = trendlines_resistencia_df.iloc[i]
+for i in range(len(trendlines_suporte_df)):
+    row = trendlines_suporte_df.iloc[i]
 
-#     x_start = int(row['inicio_janela'])
-#     y_start = row['resist_slope'] * x_start + row['resist_intercept']
+    x_start = int(row['inicio_janela'])
+    y_start = row['support_slope'] * x_start + row['support_intercept']
 
-#     # Ajustar y_start se necessário
-#     if y_start < 0:
-#         x_start = max(0, min(len(datas) - 1, int(-row['resist_intercept'] / row['resist_slope'])))
-#         y_start = row['resist_slope'] * x_start + row['resist_intercept']
+    # Ajustar y_start se necessário
+    if y_start < 0:
+        x_start = max(0, min(len(datas) - 1, int(-row['support_intercept'] / row['support_slope'])))
+        y_start = row['support_slope'] * x_start + row['support_intercept']
 
-#     x_end = int(row['fim_janela'])
-#     y_end = row['resist_slope'] * x_end + row['resist_intercept']
+    x_end = int(row['fim_janela'])
+    y_end = row['support_slope'] * x_end + row['support_intercept']
 
-#     # Ajustar y_end se necessário
-#     if y_end < 0:
-#         x_end = max(0, min(len(datas) - 1, int(-row['resist_intercept'] / row['resist_slope'])))
-#         y_end = row['resist_slope'] * x_end + row['resist_intercept']
+    # Ajustar y_end se necessário
+    if y_end < 0:
+        x_end = max(0, min(len(datas) - 1, int(-row['support_intercept'] / row['support_slope'])))
+        y_end = row['support_slope'] * x_end + row['support_intercept']
 
-#     # Obter datas de início e fim
-#     data_start = datas[x_start]
-#     data_end = datas[x_end]
+    # Obter datas de início e fim
+    data_start = datas[x_start]
+    data_end = datas[x_end]
 
-#     # Desenhar o segmento de reta
-#     ax3.plot([data_start, data_end], [y_start, y_end], color='green', linewidth=0.4)
+    # Desenhar o segmento de reta
+    ax3.plot([data_start, data_end], [y_start, y_end], color='r', linewidth=0.4)
 
-# # ----------------------------------------------------------------
-# # Salvando e plotando
-# # ----------------------------------------------------------------
 
-# file_name = f'graficos_gerados/primeiras_retas_{ticker_clean}.png'
-# fig.savefig(file_name, dpi=300)  # Salva a figura como um arquivo PNG com alta resolução
+# Obtendo as datas associadas aos valores do RSI
+datas = data.index[len(data.index) - len(rsi_values):]
 
-# plt.show()
+# ----------------------------------------------------------------   
+# Plotando as retas de suporte do RSI
+# ----------------------------------------------------------------   
+
+for i in range(len(trendlines_resistencia_df)):
+    row = trendlines_resistencia_df.iloc[i]
+
+    x_start = int(row['inicio_janela'])
+    y_start = row['resist_slope'] * x_start + row['resist_intercept']
+
+    # Ajustar y_start se necessário
+    if y_start < 0:
+        x_start = max(0, min(len(datas) - 1, int(-row['resist_intercept'] / row['resist_slope'])))
+        y_start = row['resist_slope'] * x_start + row['resist_intercept']
+
+    x_end = int(row['fim_janela'])
+    y_end = row['resist_slope'] * x_end + row['resist_intercept']
+
+    # Ajustar y_end se necessário
+    if y_end < 0:
+        x_end = max(0, min(len(datas) - 1, int(-row['resist_intercept'] / row['resist_slope'])))
+        y_end = row['resist_slope'] * x_end + row['resist_intercept']
+
+    # Obter datas de início e fim
+    data_start = datas[x_start]
+    data_end = datas[x_end]
+
+    # Desenhar o segmento de reta
+    ax3.plot([data_start, data_end], [y_start, y_end], color='green', linewidth=0.4)
+
+# ----------------------------------------------------------------
+# Salvando e plotando
+# ----------------------------------------------------------------
+
+file_name = f'graficos_gerados/primeiras_retas_{ticker_clean}.png'
+fig.savefig(file_name, dpi=300)  # Salva a figura como um arquivo PNG com alta resolução
+
+plt.show()
 
 # ---------------------- Fim de código para geração de gráfico auxiliar, comentado para performance ----------------------
-
-
 
 # --------------------------------------------------------------------------------------------
 # Eliminando as retas de suporte e resistência que não passam por pelo menos três pontos 
@@ -569,7 +568,7 @@ mapeados_trendlines_suporte_df.to_csv('dados_csv_produzidos/mapeados_trendlines_
 
 expurgado_trendlines_suporte_df = mapeados_trendlines_suporte_df[mapeados_trendlines_suporte_df['mapeado'] != 0]
 
-expurgado_trendlines_suporte_df.to_csv('dados_csv_produzidos/expurgado_trendlines_suporte.csv', index=True)
+# expurgado_trendlines_suporte_df.to_csv('dados_csv_produzidos/expurgado_trendlines_suporte.csv', index=True)
 
 
 # Mapeando as retas resistência para encontrar as que passaram por três tops até o fim da janela que criou a reta
@@ -586,128 +585,128 @@ expurgado_trendlines_resistencia_df.to_csv('dados_csv_produzidos/expurgado_trend
 
 # ---------------------- Início de código para geração de gráfico auxiliar, comentado para performance ----------------------
 
-# plt.style.use('default')
-# fig, (ax1, ax3) = plt.subplots(2, sharex=True, gridspec_kw={'height_ratios': [2, 1]})
+plt.style.use('default')
+fig, (ax1, ax3) = plt.subplots(2, sharex=True, gridspec_kw={'height_ratios': [2, 1]})
 
-# # ----------------------------------------------------------------   
-# # Plotando o preço de fechamento
-# # ----------------------------------------------------------------   
+# ----------------------------------------------------------------   
+# Plotando o preço de fechamento
+# ----------------------------------------------------------------   
 
-# data['Close'].plot(ax=ax1, color='blue', label=ticker_clean + ' Close Price', linewidth = 0.4)
+data['Close'].plot(ax=ax1, color='blue', label=ticker_clean + ' Close Price', linewidth = 0.4)
 
-# # ----------------------------------------------------------------   
-# # Plotando o RSI
-# # ----------------------------------------------------------------   
+# ----------------------------------------------------------------   
+# Plotando o RSI
+# ----------------------------------------------------------------   
 
-# data['RSI'].plot(ax=ax3, color='purple', label='RSI', linewidth = 0.5)
+data['RSI'].plot(ax=ax3, color='purple', label='RSI', linewidth = 0.5)
 
-# # ----------------------------------------------------------------   
-# # Plotando o as linhas de sobrecompra (RSI = 70) e sobrevenda (RSI = 30)
-# # ----------------------------------------------------------------   
-# ax3.axhline(70, color='gray', linestyle='--', linewidth = 0.4)  # Linha de sobrecompra
-# ax3.axhline(30, color='gray', linestyle='--', linewidth = 0.4)  # Linha de sobrevenda
+# ----------------------------------------------------------------   
+# Plotando o as linhas de sobrecompra (RSI = 70) e sobrevenda (RSI = 30)
+# ----------------------------------------------------------------   
+ax3.axhline(70, color='gray', linestyle='--', linewidth = 0.4)  # Linha de sobrecompra
+ax3.axhline(30, color='gray', linestyle='--', linewidth = 0.4)  # Linha de sobrevenda
 
-# plt.legend()
-# ax1.set_title(ticker_clean + " and RSI", color='black', fontsize=8)
-# ax1.legend(loc='upper left', fontsize=6)
-# ax3.legend(loc='upper left', fontsize=6)
-# ax3.set_ylim([0, 100])  # O RSI varia de 0 a 100
+plt.legend()
+ax1.set_title(ticker_clean + " and RSI", color='black', fontsize=8)
+ax1.legend(loc='upper left', fontsize=6)
+ax3.legend(loc='upper left', fontsize=6)
+ax3.set_ylim([0, 100])  # O RSI varia de 0 a 100
 
-# # ----------------------------------------------------------------   
-# # Plotando os topos e fundos no gráfico
-# # ----------------------------------------------------------------   
+# ----------------------------------------------------------------   
+# Plotando os topos e fundos no gráfico
+# ----------------------------------------------------------------   
 
-# for top in tops_df.itertuples():
-#     # Plotar cada topo no gráfico RSI usando a data correspondente
-#     ax3.plot(idx[top.top_bottom_idx], data['RSI'][top.top_bottom_idx], marker='o', color='green', markersize=0.3)
+for top in tops_df.itertuples():
+    # Plotar cada topo no gráfico RSI usando a data correspondente
+    ax3.plot(idx[top.top_bottom_idx], data['RSI'][top.top_bottom_idx], marker='o', color='green', markersize=0.3)
 
-# for bottom in bottoms_df.itertuples():
-#     # Plotar cada fundo no gráfico RSI usando a data correspondente
-#     ax3.plot(idx[bottom.top_bottom_idx], data['RSI'][bottom.top_bottom_idx], marker='o', color='red', markersize=0.3)
+for bottom in bottoms_df.itertuples():
+    # Plotar cada fundo no gráfico RSI usando a data correspondente
+    ax3.plot(idx[bottom.top_bottom_idx], data['RSI'][bottom.top_bottom_idx], marker='o', color='red', markersize=0.3)
 
-# # ----------------------------------------------------------------
-# # Ajustando o título e diminuir o tamanho da fonte
-# # ----------------------------------------------------------------
-# ax1.set_title(ticker_clean + " and RSI", color='black', fontsize=8)
+# ----------------------------------------------------------------
+# Ajustando o título e diminuir o tamanho da fonte
+# ----------------------------------------------------------------
+ax1.set_title(ticker_clean + " and RSI", color='black', fontsize=8)
 
-# # ----------------------------------------------------------------
-# # Reduzindo o tamanho da fonte dos valores da escala
-# # ----------------------------------------------------------------
-# ax1.tick_params(axis='both', which='major', labelsize=6)  # Tamanho da fonte dos ticks de ax1
-# ax3.tick_params(axis='both', which='major', labelsize=6)  # Tamanho da fonte dos ticks de ax3
+# ----------------------------------------------------------------
+# Reduzindo o tamanho da fonte dos valores da escala
+# ----------------------------------------------------------------
+ax1.tick_params(axis='both', which='major', labelsize=6)  # Tamanho da fonte dos ticks de ax1
+ax3.tick_params(axis='both', which='major', labelsize=6)  # Tamanho da fonte dos ticks de ax3
 
 
-# # Obter as datas associadas aos valores do RSI
-# datas = data.index[len(data.index) - len(rsi_values):]
+# Obter as datas associadas aos valores do RSI
+datas = data.index[len(data.index) - len(rsi_values):]
 
-# # ----------------------------------------------------------------   
-# # Plotando as retas de suporte do RSI
-# # ----------------------------------------------------------------   
+# ----------------------------------------------------------------   
+# Plotando as retas de suporte do RSI
+# ----------------------------------------------------------------   
 
-# for i in range(len(expurgado_trendlines_suporte_df)):
-#     row = expurgado_trendlines_suporte_df.iloc[i]
+for i in range(len(expurgado_trendlines_suporte_df)):
+    row = expurgado_trendlines_suporte_df.iloc[i]
 
-#     x_start = int(row['inicio_janela'])
-#     y_start = row['support_slope'] * x_start + row['support_intercept']
+    x_start = int(row['inicio_janela'])
+    y_start = row['support_slope'] * x_start + row['support_intercept']
 
-#     # Ajustar y_start se necessário
-#     if y_start < 0:
-#         x_start = max(0, min(len(datas) - 1, int(-row['support_intercept'] / row['support_slope'])))
-#         y_start = row['support_slope'] * x_start + row['support_intercept']
+    # Ajustar y_start se necessário
+    if y_start < 0:
+        x_start = max(0, min(len(datas) - 1, int(-row['support_intercept'] / row['support_slope'])))
+        y_start = row['support_slope'] * x_start + row['support_intercept']
 
-#     x_end = min(len(datas)-1, int(row['x_max']))
-#     y_end = row['support_slope'] * x_end + row['support_intercept']
+    x_end = min(len(datas)-1, int(row['x_max']))
+    y_end = row['support_slope'] * x_end + row['support_intercept']
 
-#     # Ajustar y_end se necessário
-#     if y_end < 0:
-#         x_end = max(0, min(len(datas) - 1, int(-row['support_intercept'] / row['support_slope'])))
-#         y_end = row['support_slope'] * x_end + row['support_intercept']
+    # Ajustar y_end se necessário
+    if y_end < 0:
+        x_end = max(0, min(len(datas) - 1, int(-row['support_intercept'] / row['support_slope'])))
+        y_end = row['support_slope'] * x_end + row['support_intercept']
 
-#     # Obter datas de início e fim
-#     data_start = datas[x_start]
-#     data_end = datas[x_end]
+    # Obter datas de início e fim
+    data_start = datas[x_start]
+    data_end = datas[x_end]
 
-#     # Desenhar o segmento de reta
-#     ax3.plot([data_start, data_end], [y_start, y_end], color='r', linewidth=0.4)
+    # Desenhar o segmento de reta
+    ax3.plot([data_start, data_end], [y_start, y_end], color='r', linewidth=0.4)
 
-# # ----------------------------------------------------------------   
-# # Plotando as retas de rsistencia  do RSI
-# # ----------------------------------------------------------------   
+# ----------------------------------------------------------------   
+# Plotando as retas de rsistencia  do RSI
+# ----------------------------------------------------------------   
 
-# for i in range(len(expurgado_trendlines_resistencia_df)):
-#     row = expurgado_trendlines_resistencia_df.iloc[i]
+for i in range(len(expurgado_trendlines_resistencia_df)):
+    row = expurgado_trendlines_resistencia_df.iloc[i]
 
-#     x_start = int(row['inicio_janela'])
-#     y_start = row['resist_slope'] * x_start + row['resist_intercept']
+    x_start = int(row['inicio_janela'])
+    y_start = row['resist_slope'] * x_start + row['resist_intercept']
 
-#     # Ajustar y_start se necessário
-#     if y_start < 0:
-#         x_start = max(0, min(len(datas) - 1, int(-row['resist_intercept'] / row['resist_slope'])))
-#         y_start = row['resist_slope'] * x_start + row['resist_intercept']
+    # Ajustar y_start se necessário
+    if y_start < 0:
+        x_start = max(0, min(len(datas) - 1, int(-row['resist_intercept'] / row['resist_slope'])))
+        y_start = row['resist_slope'] * x_start + row['resist_intercept']
 
-#     x_end = min(len(datas)-1, int(row['fim_janela']))
-#     y_end = row['resist_slope'] * x_end + row['resist_intercept']
+    x_end = min(len(datas)-1, int(row['fim_janela']))
+    y_end = row['resist_slope'] * x_end + row['resist_intercept']
 
-#     # Ajustar y_end se necessário
-#     if y_end < 0:
-#         x_end = max(0, min(len(datas) - 1, int(-row['resist_intercept'] / row['resist_slope'])))
-#         y_end = row['resist_slope'] * x_end + row['resist_intercept']
+    # Ajustar y_end se necessário
+    if y_end < 0:
+        x_end = max(0, min(len(datas) - 1, int(-row['resist_intercept'] / row['resist_slope'])))
+        y_end = row['resist_slope'] * x_end + row['resist_intercept']
 
-#     # Obter datas de início e fim
-#     data_start = datas[x_start]
-#     data_end = datas[x_end]
+    # Obter datas de início e fim
+    data_start = datas[x_start]
+    data_end = datas[x_end]
 
-#     # Desenhar o segmento de reta
-#     ax3.plot([data_start, data_end], [y_start, y_end], color='green', linewidth=0.4)
+    # Desenhar o segmento de reta
+    ax3.plot([data_start, data_end], [y_start, y_end], color='green', linewidth=0.4)
 
-# # ----------------------------------------------------------------
-# # Salvando e plotando
-# # ----------------------------------------------------------------
+# ----------------------------------------------------------------
+# Salvando e plotando
+# ----------------------------------------------------------------
 
-# file_name = f'graficos_gerados/retas_com_expurgo_{ticker_clean}.png'
-# fig.savefig(file_name, dpi=300)  # Salva a figura como um arquivo PNG com alta resolução
+file_name = f'graficos_gerados/retas_com_expurgo_{ticker_clean}.png'
+fig.savefig(file_name, dpi=300)  # Salva a figura como um arquivo PNG com alta resolução
 
-# plt.show()
+plt.show()
 
 # ---------------------- Fim de código para geração de gráfico auxiliar, comentado para performance ----------------------
 
@@ -1003,10 +1002,10 @@ plt.show()
 # ------------------------------------------------------------------------------------
 
 class EstrategiaAdaptada(Strategy):
+    # Adicione os parâmetros como variáveis de classe
+    pt = pt_val  # Profit target padrão, será alterado por BT.run()
+    sl = sl_val  # Stop loss padrão, será alterado por BT.run()
 
-    pt = 0.05
-    sl = 0.02
-    
     def init(self):
         # Inicializando as variáveis de estado
         self.pos_ant = 0  # 0 = sem posição, -1 = vendido, 1 = comprado
@@ -1021,34 +1020,84 @@ class EstrategiaAdaptada(Strategy):
         # Evento da estratégia
         evento = self.data.df.loc[self.data.df.index[ind], 'Evento']
 
-        # Lógica de abertura de uma posição a partida de uma posição neutra
-        
+        # Lógica de abertura de uma posição a partir de uma posição neutra
         if self.pos_ant == 0:  # Sem posição
             if evento == 1:  # Sinal de compra
                 self.buy()  # Abrir posição de compra
-                self.pos_ant = 1 # Muda variável de estado para comprado
-                self.ini_posicao_ant = ind # Marca a barra em que a posição foi comprada
-                self.valor_posicao_ant = valor # Assume que posição adiquirida foi o preço de fechamento da barra sendo inspecionada
+                self.pos_ant = 1  # Muda variável de estado para comprado
+                with open("saida.txt", "a") as arquivo:
+                    print("Mudei de zerado para comprado em ", ind, file=arquivo)
+                    print("Valor da posição atual", valor, file=arquivo)
+                    print("Profit taking considerado ", self.pt, file=arquivo)
+                    print("Stop loss considerado ", self.sl, file=arquivo)               
+                self.ini_posicao_ant = ind  # Marca a barra em que a posição foi comprada
+                self.valor_posicao_ant = valor  # Assume que posição adquirida foi o preço de fechamento da barra sendo inspecionada
             elif evento == 2:  # Sinal de venda
                 self.sell()  # Abrir posição de venda
-                self.pos_ant = -1 # Muda variável de estado para vendido
-                self.ini_posicao_ant = ind # Marca a barra em que a posição foi vendida
-                self.valor_posicao_ant = valor # Assume que posição vendida foi o preço de fechamento da barra sendo inspecionada
+                self.pos_ant = -1  # Muda variável de estado para vendido
+                with open("saida.txt", "a") as arquivo:
+                    print("Mudei de zerado para vendido em ", ind, file=arquivo)
+                    print("Valor da posição atual", valor, file=arquivo)
+                self.ini_posicao_ant = ind  # Marca a barra em que a posição foi vendida
+                self.valor_posicao_ant = valor  # Assume que posição vendida foi o preço de fechamento da barra sendo inspecionada
 
         # Lógica de decisão caso a posição anterior fosse vendida
-
         elif self.pos_ant == -1:  # Posição vendida
-            if (valor / self.valor_posicao_ant - 1) > self.pt or (valor / self.valor_posicao_ant - 1) < -self.sl or evento == 1: # Testa stop loss ou profit taking ou sinal de compra
+            with open("saida.txt", "a") as arquivo:
+                print("trade sendo considerado ", ind, file=arquivo)
+                print("teste 1 > self.pt ou < -self.sl", -(valor / self.valor_posicao_ant - 1), file=arquivo)
+                print("teste 2 ", evento == 1, file=arquivo)
+            if -(valor / self.valor_posicao_ant-1) > self.pt or \
+               -(valor / self.valor_posicao_ant - 1) < -self.sl or evento == 1:  # Testa stop loss ou profit taking ou sinal de compra
+                with open("saida.txt", "a") as arquivo:
+                    print("Fechei a posição vendida em ", ind, file=arquivo)
+                    print("Valor da posição anterior", self.valor_posicao_ant, file=arquivo)
+                    print("Valor da posição atual", valor, file=arquivo)
+                if -(valor / self.valor_posicao_ant - 1) > self.pt:
+                    with open("saida.txt", "a") as arquivo:
+                        print("Valor da posição anterior", self.valor_posicao_ant, file=arquivo)
+                        print("Valor da posição atual", valor, file=arquivo)
+                        print("Profit taking em", ind, file=arquivo)
+                        print("Profit taking a um ganho de ", (valor / self.valor_posicao_ant - 1), file=arquivo)
+                        print("maior do que um pt de ", self.pt, file=arquivo)
+                if -(valor / self.valor_posicao_ant - 1) < -self.sl:
+                    with open("saida.txt", "a") as arquivo:
+                        print("Stop loss em ", ind, file=arquivo)
+                        print("Uma loss de ", (valor / self.valor_posicao_ant - 1), file=arquivo)
+                        print("mais negativo do que um sl de ", -self.sl, file=arquivo)
+                if evento == 1:
+                    with open("saida.txt", "a") as arquivo:
+                        print("Fechei a posição por um sinal em ", ind, file=arquivo)
                 self.position.close()  # Fecha a posição
-                self.pos_ant = 0 # Muda variável de estado para neutro
+                self.pos_ant = 0  # Muda variável de estado para neutro
 
         # Lógica de decisão caso a posição anterior fosse comprada
-
         elif self.pos_ant == 1:  # Posição comprada
+            with open("saida.txt", "a") as arquivo:
+                print("trade sendoconsiderado ", ind, file=arquivo)
+                print("teste 1", (valor / self.valor_posicao_ant-1), file=arquivo)
+                print("teste 2 ", evento == 2, file=arquivo)
             if (valor - self.valor_posicao_ant) / self.valor_posicao_ant > self.pt or \
                (valor - self.valor_posicao_ant) / self.valor_posicao_ant < -self.sl or evento == 2:
+                with open("saida.txt", "a") as arquivo:
+                    print("Fechei a posição comprada em ", ind, file=arquivo)
+                    print("Valor da posição anterior", self.valor_posicao_ant, file=arquivo)
+                    print("Valor da posição atual", valor, file=arquivo)
+                if (valor / self.valor_posicao_ant - 1) > self.pt:
+                    with open("saida.txt", "a") as arquivo:
+                        print("Profit taking em", ind, file=arquivo)
+                        print("Profit taking com um ganho de ", (valor / self.valor_posicao_ant - 1), file=arquivo)
+                        print("maior do que um pt de ", self.pt, file=arquivo)
+                if (valor / self.valor_posicao_ant - 1) < -self.sl:
+                    with open("saida.txt", "a") as arquivo:
+                        print("Stop loss em ", ind, file=arquivo)
+                        print("Uma loss de ", (valor / self.valor_posicao_ant - 1), file=arquivo)
+                        print("mais negativo do que um sl de ", -self.sl, file=arquivo)
+                if evento == 2 > self.pt:
+                    with open("saida.txt", "a") as arquivo:
+                        print("Fechei a posição por um sinal em ", ind, file=arquivo)
                 self.position.close()  # Fecha a posição
-                self.pos_ant = 0 # Muda variável de estado para neutro
+                self.pos_ant = 0  # Muda variável de estado para neutro
 
 
 # ------------------------------------------------------------------------------------
@@ -1086,12 +1135,11 @@ dados_backtesting = pd.DataFrame({
     'Evento': data['Evento']  # Sinais de compra e venda
 }, index=data.index)  # Define o índice como a coluna 'Date'
 
-dados_backtesting.to_csv('Dados_para_backtesting.csv', index=True)
+dados_backtesting.to_csv('Dados_para_backtesting_1.csv', index=True)
 
-print("Tipo Index ", type(dados_backtesting.index))
 # Executar o backtesting
-bt = Backtest(dados_backtesting, EstrategiaAdaptada, cash=10000000, commission=.002)
-resultados = bt.run()
+bt = Backtest(dados_backtesting, EstrategiaAdaptada, cash=10_000_000, commission=.002)
+resultados =  bt.run(pt=pt_val, sl=sl_val)
 
 # Exibir os resultados
 print(resultados)

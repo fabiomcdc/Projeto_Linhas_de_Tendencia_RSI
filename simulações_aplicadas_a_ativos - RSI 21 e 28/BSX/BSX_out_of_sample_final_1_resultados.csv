@@ -1,0 +1,2 @@
+;janela_rsi;ordem;lookback;d_max;num_pontos;break_min;ppt;sl;pt;ativo;start_date;end_date;final_balance;return_acum;return_ann;sharpe_ratio;sortino_ratio;volatility;max_drawdown;trades;win_rate;profit_factor;avg_trade_return
+0;28;3;70;2;3;4;6;0,02;0,05;BSX;2002-03-05;2005-10-26;12061645,039669793;20,616450396697932;3,9810240070702774;0,28934982561754785;0,4690383805138732;13,758515314718908;-15,766307518908306;32;50,0;1,3631803258496629;0,5874858839120645

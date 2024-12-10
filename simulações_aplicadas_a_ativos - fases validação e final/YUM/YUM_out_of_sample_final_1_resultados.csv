@@ -1,0 +1,2 @@
+;janela_rsi;ordem;lookback;d_max;num_pontos;break_min;ppt;sl;pt;ativo;start_date;end_date;final_balance;return_acum;return_ann;sharpe_ratio;sortino_ratio;volatility;max_drawdown;trades;win_rate;profit_factor;avg_trade_return
+0;42;3;70;2;3;4;6;0,04;0,05;YUM;2002-03-05;2005-10-26;17175484,116860468;71,75484116860467;11,923992579627974;0,8157308862416944;1,3251228238012978;14,61755682019743;-16,02910217524608;25;72,0;3,026847037689113;2,187167961011438

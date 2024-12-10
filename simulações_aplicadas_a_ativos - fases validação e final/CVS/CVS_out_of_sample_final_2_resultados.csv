@@ -1,0 +1,2 @@
+;janela_rsi;ordem;lookback;d_max;num_pontos;break_min;ppt;sl;pt;ativo;start_date;end_date;final_balance;return_acum;return_ann;sharpe_ratio;sortino_ratio;volatility;max_drawdown;trades;win_rate;profit_factor;avg_trade_return
+0;49;3;50;2;3;4;6;0,01;0,05;CVS;2021-09-18;2024-11-01;14055237,435215747;40,55237435215747;9,306627984466488;0,6232033277993477;0,872759028815585;14,933533839316942;-21,752215983402877;27;59,25925925925925;2,044744098576407;1,268762109163446

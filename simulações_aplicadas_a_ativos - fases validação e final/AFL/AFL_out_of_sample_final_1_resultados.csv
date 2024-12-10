@@ -1,0 +1,2 @@
+;janela_rsi;ordem;lookback;d_max;num_pontos;break_min;ppt;sl;pt;ativo;start_date;end_date;final_balance;return_acum;return_ann;sharpe_ratio;sortino_ratio;volatility;max_drawdown;trades;win_rate;profit_factor;avg_trade_return
+0;35;3;90;2;3;4;6;0,04;0,05;AFL;2002-03-05;2005-10-26;18420593,91939024;84,2059391939024;13,567304422399861;1,0875886365907044;2,0797668205054896;12,474665480994435;-9,639342074291179;30;73,33333333333333;3,836481887657854;2,057155140838285
