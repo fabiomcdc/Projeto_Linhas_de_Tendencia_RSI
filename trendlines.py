@@ -209,7 +209,9 @@ def mapear_retas_com_bottoms(bottoms, retas, dist_min, num_pontos):
         retas.loc[retas['indice'] == coluna, 'x_max'] = x_max_final
         retas.loc[retas['indice'] == coluna, 'num_zeros'] = maior_zeros
 
-    # retas.to_csv('dados_csv_produzidos/retas_suporte.csv', index=True)
+    
+    retas.to_csv('dados_csv_produzidos/retas_suporte.csv', index=True)
+    
     return retas
 
 
@@ -288,117 +290,146 @@ def mapear_retas_com_tops(tops, retas, dist_min, num_pontos):
 
 
 def identificar_retas_similares_suporte(df):
-    # Adiciona uma nova coluna para a reta similar
-    df['reta_similar'] = np.nan
 
-    # Intervalo de x
-    x_vals = np.arange(20, 81)
+    # Agrupar o DataFrame pelas colunas especificadas
+    grouped_df = df.groupby(['indice_original_lower_pivot', 'support_slope', 'support_intercept']).agg({
+        'valor_rsi': 'first',  # Selecionar o primeiro valor de valor_rsi
+        'mapeado': lambda x: 1,  # Atribuir 1 para todos os grupos
+        'x_min': 'min',  # Selecionar o menor valor de x_min
+        'x_max': 'max',  # Selecionar o maior valor de x_max
+        'num_zeros': 'max',  # Selecionar o maior valor de num_zeros
+        'inicio_janela': 'min',  # Selecionar o menor valor de inicio_janela
+        'fim_janela': 'max',  # Selecionar o maior valor de fim_janela
+        'indice': 'first'  # Selecionar o primeiro valor de indice
+    }).reset_index()
 
-    # Iterar sobre cada reta no DataFrame
-    for i, reta_i in df.iterrows():
-        indice_similar = reta_i['indice_original_lower_pivot']
-        distancia_minima = float('inf')
+    return grouped_df
 
-        # Calcular os valores y para a reta atual
-        y_i = reta_i['support_slope'] * x_vals + reta_i['support_intercept']
+    # # Adiciona uma nova coluna para a reta similar
+    # df['reta_similar'] = np.nan
 
-        # Comparar com todas as outras retas
-        for j, reta_j in df.iterrows():
-            if i != j:
-                # Calcular os valores y para a reta de comparação
-                y_j = reta_j['support_slope'] * x_vals + reta_j['support_intercept']
+    # # Intervalo de x
+    # x_vals = np.arange(20, 81)
 
-                # Calcular a distância máxima entre as retas
-                distancia_max = np.max(np.abs(y_i - y_j))
+    # # Iterar sobre cada reta no DataFrame
+    # for i, reta_i in df.iterrows():
+    #     indice_similar = reta_i['indice_original_lower_pivot']
+    #     distancia_minima = float('inf')
 
-                # Verificar se as retas são similares e atualizar a reta similar se necessário
-                if distancia_max <= 4 and reta_j['indice_original_lower_pivot'] < indice_similar:
-                    indice_similar = reta_j['indice_original_lower_pivot']
-                    distancia_minima = distancia_max
+    #     # Calcular os valores y para a reta atual
+    #     y_i = reta_i['support_slope'] * x_vals + reta_i['support_intercept']
 
-        # Registrar a reta similar
-        df.at[i, 'reta_similar'] = indice_similar
+    #     # Comparar com todas as outras retas
+    #     for j, reta_j in df.iterrows():
+    #         if i != j:
+    #             # Calcular os valores y para a reta de comparação
+    #             y_j = reta_j['support_slope'] * x_vals + reta_j['support_intercept']
 
-    grupos = df.groupby('reta_similar')
+    #             # Calcular a distância máxima entre as retas
+    #             distancia_max = np.max(np.abs(y_i - y_j))
 
-    # Lista para armazenar os resultados consolidados
-    retas_consolidadas = []
+    #             # Verificar se as retas são similares e atualizar a reta similar se necessário
+    #             if distancia_max <= 4 and reta_j['indice_original_lower_pivot'] < indice_similar:
+    #                 indice_similar = reta_j['indice_original_lower_pivot']
+    #                 distancia_minima = distancia_max
 
-    for nome_grupo, grupo in grupos:
-        reta_consolidada = {
+    #     # Registrar a reta similar
+    #     df.at[i, 'reta_similar'] = indice_similar
 
-            'indice_original_lower_pivot': grupo['indice_original_lower_pivot'].min(),
-            'valor_rsi': grupo['valor_rsi'].min(),
-            'support_slope': grupo['support_slope'].mean(),
-            'support_intercept': grupo['support_intercept'].mean(),
-            'inicio_janela': grupo['inicio_janela'].min(),
-            'fim_janela': grupo['fim_janela'].min(),
-            'x_min': grupo['x_min'].min(),
-            'x_max': grupo['x_max'].max(),
-            'num_zeros': grupo['num_zeros'].min()
-        }
-        retas_consolidadas.append(reta_consolidada)
+    # grupos = df.groupby('reta_similar')
 
-    # Criar novo dataframe com as retas consolidadas
-    df_consolidado = pd.DataFrame(retas_consolidadas)
+    # # Lista para armazenar os resultados consolidados
+    # retas_consolidadas = []
 
-    return df_consolidado
+    # for nome_grupo, grupo in grupos:
+    #     reta_consolidada = {
+    #         'indice_original_lower_pivot': grupo['indice_original_lower_pivot'].min(),
+    #         'valor_rsi': grupo['valor_rsi'].min(),
+    #         'support_slope': grupo['support_slope'].mean(),
+    #         'support_intercept': grupo['support_intercept'].mean(),
+    #         'inicio_janela': grupo['inicio_janela'].min(),
+    #         'fim_janela': grupo['fim_janela'].min(),
+    #         'x_min': grupo['x_min'].min(),
+    #         'x_max': grupo['x_max'].max(),
+    #         'num_zeros': grupo['num_zeros'].min()
+    #     }
+    #     retas_consolidadas.append(reta_consolidada)
+
+    # # Criar novo dataframe com as retas consolidadas
+    # df_consolidado = pd.DataFrame(retas_consolidadas)
+
+    # return df_consolidado
 
 
 
 def identificar_retas_similares_resistencia(df):
-    # Adiciona uma nova coluna para a reta similar
-    df['reta_similar'] = np.nan
 
-    # Intervalo de x
-    x_vals = np.arange(20, 81)
+    # Agrupar o DataFrame pelas colunas especificadas
+    grouped_df = df.groupby(['indice_original_upper_pivot', 'resist_slope', 'resist_intercept']).agg({
+        'valor_rsi': 'first',  # Selecionar o primeiro valor de valor_rsi
+        'mapeado': lambda x: 1,  # Atribuir 1 para todos os grupos
+        'x_min': 'min',  # Selecionar o menor valor de x_min
+        'x_max': 'max',  # Selecionar o maior valor de x_max
+        'num_zeros': 'max',  # Selecionar o maior valor de num_zeros
+        'inicio_janela': 'min',  # Selecionar o menor valor de inicio_janela
+        'fim_janela': 'max',  # Selecionar o maior valor de fim_janela
+        'indice': 'first'  # Selecionar o primeiro valor de indice
+    }).reset_index()
 
-    # Iterar sobre cada reta no DataFrame
-    for i, reta_i in df.iterrows():
-        indice_similar = reta_i['indice_original_upper_pivot']
-        distancia_minima = float('inf')
+    return grouped_df
 
-        # Calcular os valores y para a reta atual
-        y_i = reta_i['resist_slope'] * x_vals + reta_i['resist_intercept']
+    # # Adiciona uma nova coluna para a reta similar
+    # df['reta_similar'] = np.nan
 
-        # Comparar com todas as outras retas
-        for j, reta_j in df.iterrows():
-            if i != j and reta_j['indice_original_upper_pivot'] == reta_i['indice_original_upper_pivot']:
-                # Calcular os valores y para a reta de comparação
-                y_j = reta_j['resist_slope'] * x_vals + reta_j['resist_intercept']
+    # # Intervalo de x
+    # x_vals = np.arange(20, 81)
 
-                # Calcular a distância máxima entre as retas
-                distancia_max = np.max(np.abs(y_i - y_j))
+    # # Iterar sobre cada reta no DataFrame
+    # for i, reta_i in df.iterrows():
+    #     indice_similar = reta_i['indice_original_upper_pivot']
+    #     distancia_minima = float('inf')
 
-                # Verificar se as retas são similares e atualizar a reta similar se necessário
-                if distancia_max <= 4 and reta_j['indice_original_upper_pivot'] < indice_similar:
-                    indice_similar = reta_j['indice_original_upper_pivot']
-                    distancia_minima = distancia_max
+    #     # Calcular os valores y para a reta atual
+    #     y_i = reta_i['resist_slope'] * x_vals + reta_i['resist_intercept']
 
-        # Registrar a reta similar
-        df.at[i, 'reta_similar'] = indice_similar
+    #     # Comparar com todas as outras retas
+    #     for j, reta_j in df.iterrows():
+    #         if i != j and reta_j['indice_original_upper_pivot'] == reta_i['indice_original_upper_pivot']:
+    #             # Calcular os valores y para a reta de comparação
+    #             y_j = reta_j['resist_slope'] * x_vals + reta_j['resist_intercept']
 
-    grupos = df.groupby('reta_similar')
+    #             # Calcular a distância máxima entre as retas
+    #             distancia_max = np.max(np.abs(y_i - y_j))
 
-    # Lista para armazenar os resultados consolidados
-    retas_consolidadas = []
+    #             # Verificar se as retas são similares e atualizar a reta similar se necessário
+    #             if distancia_max <= 1 and reta_j['indice_original_upper_pivot'] < indice_similar:
+    #                 indice_similar = reta_j['indice_original_upper_pivot']
+    #                 distancia_minima = distancia_max
 
-    for nome_grupo, grupo in grupos:
-        reta_consolidada = {
-            'indice_original_upper_pivot': grupo['indice_original_upper_pivot'].min(),
-            'valor_rsi': grupo['valor_rsi'].min(),
-            'resist_slope': grupo['resist_slope'].mean(),
-            'resist_intercept': grupo['resist_intercept'].mean(),
-            'inicio_janela': grupo['inicio_janela'].min(),
-            'fim_janela': grupo['fim_janela'].min(),
-            'x_min': grupo['x_min'].min(),
-            'x_max': grupo['x_max'].max(),
-            'num_zeros': grupo['num_zeros'].min()
-        }
-        retas_consolidadas.append(reta_consolidada)
+    #     # Registrar a reta similar
+    #     df.at[i, 'reta_similar'] = indice_similar
 
-    # Criar novo dataframe com as retas consolidadas
-    df_consolidado = pd.DataFrame(retas_consolidadas)
+    # grupos = df.groupby('reta_similar')
+
+    # # Lista para armazenar os resultados consolidados
+    # retas_consolidadas = []
+
+    # for nome_grupo, grupo in grupos:
+    #     reta_consolidada = {
+    #         'indice_original_upper_pivot': grupo['indice_original_upper_pivot'].min(),
+    #         'valor_rsi': grupo['valor_rsi'].min(),
+    #         'resist_slope': grupo['resist_slope'].mean(),
+    #         'resist_intercept': grupo['resist_intercept'].mean(),
+    #         'inicio_janela': grupo['inicio_janela'].min(),
+    #         'fim_janela': grupo['fim_janela'].max(),
+    #         'x_min': grupo['x_min'].min(),
+    #         'x_max': grupo['x_max'].max(),
+    #         'num_zeros': grupo['num_zeros'].min()
+    #     }
+    #     retas_consolidadas.append(reta_consolidada)
+
+    # # Criar novo dataframe com as retas consolidadas
+    # df_consolidado = pd.DataFrame(retas_consolidadas)
 
     return df_consolidado
 
@@ -429,7 +460,7 @@ def checar_cruzou_para_baixo(ind_pontos, slope_reta_suporte, intercept_reta_supo
         for x in range(int(x1) + 1, int(x2)):
             y3 = dados_rsi.iloc[x]['RSI'] # Obtendo o valor de RSI correspondente ao x3 sendo testado => y3
             y_reta_3 = slope_reta_suporte * x + intercept_reta_suporte # Obtendo o valor na reta correspondente ao x3 sendo testado => y_reta_3
-            if y3 < y_reta_3: # Se y3 < y_reta_3, é sinal que houve rompimento no ponto x3 sendo testado, interrompo o teste e retorno x e y3, caso contrário, continuo
+            if y3 < y_reta_3  and abs(y3 - y_reta_3) > break_min: # Se y3 < y_reta_3, é sinal que houve rompimento no ponto x3 sendo testado, interrompo o teste e retorno x e y3, caso contrário, continuo
                 return True, x, y3  # Retorna True e o primeiro x3 encontrado
         return True, x2, y2  # Retorno criado para evitar mensagem de erro pois loop for deveria encontrar x3 válido, nem que seja igual a x2
     else:
@@ -459,7 +490,7 @@ def checar_cruzou_para_cima(ind_pontos, slope_reta_resistencia, intercept_reta_r
         for x in range(int(x1) + 1, int(x2)):
             y3 = dados_rsi.iloc[x]['RSI'] # Obtendo o valor de RSI correspondente ao x3 sendo testado => y3
             y_reta_3 = slope_reta_resistencia * x + intercept_reta_resistencia # Obtendo o valor na reta correspondente ao x3 sendo testado => y_reta_3
-            if y3 > y_reta_3: # Se y3 < y_reta_3, é sinal que houve rompimento no ponto x3 sendo testado, interrompo o teste e retorno x e y3, caso contrário, continuo
+            if y3 > y_reta_3 and abs(y3 - y_reta_3) > break_min: # Se y3 < y_reta_3, é sinal que houve rompimento no ponto x3 sendo testado, interrompo o teste e retorno x e y3, caso contrário, continuo
                 return True, x, y3  # Retorna True e o primeiro x3 encontrado
         return True, x2, y2  # Retorno criado para evitar mensagem de erro pois loop for deveria encontrar x3 válido, nem que seja igual a x2
     else:

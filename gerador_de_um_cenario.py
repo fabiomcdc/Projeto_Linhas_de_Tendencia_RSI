@@ -4,7 +4,9 @@
 
 import pandas as pd
 import numpy as np
+import os
 import matplotlib.pyplot as plt
+from matplotlib.dates import MonthLocator, DateFormatter
 
 # ---------------------------------------------------------------------
 #  Eliminando warnings indesejados 
@@ -33,7 +35,17 @@ from calcula_RSI import compute_rsi
 
 #---------------------------------------------------------------------
 
-def simulacao(janela_rsi, ordem, lookback1, distancia_maxima, num_pontos, break_min, pontos_para_tras, data, aplicar_log, ticker_clean, imprime_grafico):
+def simulacao(janela_rsi, 
+              ordem, 
+              lookback1, 
+              distancia_maxima, 
+              num_pontos, 
+              break_min, 
+              pontos_para_tras, 
+              data, aplicar_log, 
+              ticker_clean, 
+              imprime_grafico, 
+              salva_dados):
 
 
 
@@ -42,6 +54,10 @@ def simulacao(janela_rsi, ordem, lookback1, distancia_maxima, num_pontos, break_
     # ---------------------------------------------------------------------
 
     # Preparando base para o RSI, dependendo se vai usar log ou não
+
+    ordem_str =  str(int(ordem))
+    lookback_str = str(int(lookback1))
+    break_min_str = str(int(break_min))
 
     if aplicar_log:
         colunas_numericas_para_log = ['Open', 'High', 'Low', 'Close', 'Adj Close']
@@ -54,9 +70,13 @@ def simulacao(janela_rsi, ordem, lookback1, distancia_maxima, num_pontos, break_
 
     rsi_df = pd.DataFrame(data['RSI'])
 
-
-    # file_name = f'dados_csv_produzidos/dados_rsi/rsi_values_{ticker_clean}.csv'
-    # rsi_df.to_csv(file_name, index=True)
+    if salva_dados:
+        simulacao_name = f'janela_rsi_{janela_rsi} ordem_{ordem_str}, lookback_{lookback_str}, break_min_{break_min_str}'
+        file_name = f'simulações_individuais/{ticker_clean}/{simulacao_name}/rsi_values.csv'
+        folder_path = f'simulações_individuais/{ticker_clean}/{simulacao_name}'
+        if not os.path.exists(folder_path):
+            os.makedirs(folder_path)
+        rsi_df.reset_index().to_csv(file_name, sep=";", decimal=",", index=True, encoding="utf-8")
 
 
 
@@ -79,19 +99,39 @@ def simulacao(janela_rsi, ordem, lookback1, distancia_maxima, num_pontos, break_
 
     tops_df = pd.DataFrame(tops, columns=['top_bottom_idx', 'top_bottom_value'])
     tops_df = tops_df.dropna(subset=['top_bottom_value'])
-    # file_name = f'dados_csv_produzidos/minimos_maximos_locais/maximos_locais_{ticker_clean}.csv'
-    # tops_df.to_csv(file_name, index=True)
+
+    if salva_dados:
+        simulacao_name = f'janela_rsi_{janela_rsi} ordem_{ordem_str}, lookback_{lookback_str}, break_min_{break_min_str}'
+        file_name = f'simulações_individuais/{ticker_clean}/{simulacao_name}/maximos_locais.csv'
+        tops_df.to_csv(file_name, sep=";", decimal=",", index=False, encoding="utf-8") # Index é o idx
+
 
     bottoms_df = pd.DataFrame(bottoms, columns=['top_bottom_idx', 'top_bottom_value'])
     bottoms_df = bottoms_df.dropna(subset=['top_bottom_value'])
-    # file_name = f'dados_csv_produzidos/minimos_maximos_locais/minimos_locais_{ticker_clean}.csv'
-    # bottoms_df.to_csv(file_name, index=True)
+
+    if salva_dados:
+        simulacao_name = f'janela_rsi_{janela_rsi} ordem_{ordem_str}, lookback_{lookback_str}, break_min_{break_min_str}'
+        file_name = f'simulações_individuais/{ticker_clean}/{simulacao_name}/minimos_locais.csv'
+        bottoms_df.to_csv(file_name, sep=";", decimal=",", index=True, encoding="utf-8")
 
     idx = data.index
 
 
 
-    # ---------------------- Início de código para geração de gráfico auxiliar, comentado para performance ----------------------
+
+
+
+
+
+
+
+
+    # ------------------------------------------------------------------------------------------------------------------
+    # ------------------------------------------------------------------------------------------------------------------
+    # ---------------------- Início de código para geração de gráfico auxiliar, comentado para performance -------------
+    # ------------------------------------------------------------------------------------------------------------------
+    # ------------------------------------------------------------------------------------------------------------------
+
 
     if imprime_grafico:
         #-----------------------------------------------------------------------   
@@ -99,7 +139,7 @@ def simulacao(janela_rsi, ordem, lookback1, distancia_maxima, num_pontos, break_
         #-----------------------------------------------------------------------   
 
         plt.style.use('default')
-        fig, (ax1, ax3) = plt.subplots(2, sharex=True, gridspec_kw={'height_ratios': [2, 1]})
+        fig, (ax1, ax3) = plt.subplots(2, sharex=True, gridspec_kw={'height_ratios': [2, 1]}, figsize=(16, 9))
 
         #----------------------------------------------------------------   
         # Plotando o preço de fechamento
@@ -155,12 +195,28 @@ def simulacao(janela_rsi, ordem, lookback1, distancia_maxima, num_pontos, break_
         # Salvando e plotando
         # ----------------------------------------------------------------
 
-        file_name = f'simulações_aplicadas_a_ativos/{ticker_clean}/{ticker_clean}_cenário_escolhido_mínimos_máximos.png'
+        fig.subplots_adjust(
+            left=0.02,  # Margem esquerda
+            right=0.98,  # Margem direta
+            top=0.98,  # Margem superior
+            bottom=0.05,  # Margem inferior
+            hspace=0.02)  # Espaçamento vertical entre os gráficos
+        
+        file_name = f'simulações_individuais/{ticker_clean}/{simulacao_name}/mínimos_máximos.png'
         fig.savefig(file_name, dpi=300)  # Salva a figura como um arquivo PNG com alta resolução
 
-        plt.show()
+        # plt.show()
 
-    # ---------------------- Fim de código para geração de gráfico auxiliar, comentado para performance ----------------------
+    # ------------------------------------------------------------------------------------------------------------------
+    # ------------------------------------------------------------------------------------------------------------------
+    # ---------------------- Fim de código para geração de gráfico auxiliar, comentado para performance ----------------
+    # ------------------------------------------------------------------------------------------------------------------
+    # ------------------------------------------------------------------------------------------------------------------
+
+
+
+
+
 
 
 
@@ -243,8 +299,12 @@ def simulacao(janela_rsi, ordem, lookback1, distancia_maxima, num_pontos, break_
                     rolagem = min(rolagem_1,rolagem_2)
                     
             borda_esquerda = borda_esquerda + rolagem
-
-        # trendlines_suporte_df.to_csv('dados_csv_produzidos/trendlines_iniciais/trendlines_suporte.csv', index=True)
+        
+        
+        if salva_dados:
+            simulacao_name = f'janela_rsi_{janela_rsi} ordem_{ordem_str}, lookback_{lookback_str}, break_min_{break_min_str}'
+            file_name = f'simulações_individuais/{ticker_clean}/{simulacao_name}/trendlines_suporte.csv'
+            trendlines_suporte_df.to_csv(file_name, sep=";", decimal=",", index=False, encoding="utf-8")
 
 
     # ---------------------------------------------------------------------
@@ -331,16 +391,26 @@ def simulacao(janela_rsi, ordem, lookback1, distancia_maxima, num_pontos, break_
                     rolagem = min(rolagem_1,rolagem_2)
             
             borda_esquerda = borda_esquerda + rolagem
-        
-    # trendlines_resistencia_df.to_csv('dados_csv_produzidos/trendlines_iniciais/trendlines_resistencia.csv', index=True)
+
+    if salva_dados:
+        simulacao_name = f'janela_rsi_{janela_rsi} ordem_{ordem_str}, lookback_{lookback_str}, break_min_{break_min_str}'
+        file_name = f'simulações_individuais/{ticker_clean}/{simulacao_name}/trendlines_resistencia.csv'
+        trendlines_resistencia_df.to_csv(file_name, sep=";", decimal=",", index=False, encoding="utf-8")
 
 
 
-    # ---------------------- Início de código para geração de gráfico auxiliar, comentado para performance ----------------------
+
+
+
+    # ------------------------------------------------------------------------------------------------------------------
+    # ------------------------------------------------------------------------------------------------------------------
+    # ----------------- Início de código para geração de gráfico auxiliar (todas as retas) -----------------------------
+    # ------------------------------------------------------------------------------------------------------------------
+    # ------------------------------------------------------------------------------------------------------------------
 
     if imprime_grafico:
         plt.style.use('default')
-        fig, (ax1, ax3) = plt.subplots(2, sharex=True, gridspec_kw={'height_ratios': [2, 1]})
+        fig, (ax1, ax3) = plt.subplots(2, sharex=True, gridspec_kw={'height_ratios': [2, 1]}, figsize=(16, 9))
 
         # ----------------------------------------------------------------   
         # Plotando o preço de fechamento
@@ -460,13 +530,28 @@ def simulacao(janela_rsi, ordem, lookback1, distancia_maxima, num_pontos, break_
         # ----------------------------------------------------------------
         # Salvando e plotando
         # ----------------------------------------------------------------
-
-        file_name = f'simulações_aplicadas_a_ativos/{ticker_clean}/{ticker_clean}_cenário_escolhido_primeiras_retas.png'
+ 
+        fig.subplots_adjust(
+            left=0.02,  # Margem esquerda
+            right=0.98,  # Margem direta
+            top=0.98,  # Margem superior
+            bottom=0.05,  # Margem inferior
+            hspace=0.02)  # Espaçamento vertical entre os gráficos
+        
+        file_name = f'simulações_individuais/{ticker_clean}/{simulacao_name}/primeiras_retas.png'
         fig.savefig(file_name, dpi=300)  # Salva a figura como um arquivo PNG com alta resolução
 
-        plt.show()
 
-    # ---------------------- Fim de código para geração de gráfico auxiliar, comentado para performance ----------------------
+        # plt.show()
+    # ------------------------------------------------------------------------------------------------------------------
+    # ------------------------------------------------------------------------------------------------------------------
+    # ---------------------- Fim de código para geração de gráfico auxiliar --------------------------------------------
+    # ------------------------------------------------------------------------------------------------------------------
+    # ------------------------------------------------------------------------------------------------------------------
+
+
+
+
 
 
 
@@ -474,40 +559,71 @@ def simulacao(janela_rsi, ordem, lookback1, distancia_maxima, num_pontos, break_
     # Eliminando as retas de suporte e resistência que não passam por pelo menos três pontos 
     # --------------------------------------------------------------------------------------------
 
-    # Mapeando as retas suporte para encontrar as que passaram por três bottoms até o fim da janela que criou a reta
+    # Mapeando as retas suporte para encontrar por quantos pontos elas passaram. Marcam mapeado = 1 se maior ou igual a pontos_min
+    # e marca mapeado = 0 se menor que pontos_min
 
     mapeados_trendlines_suporte_df = mapear_retas_com_bottoms(bottoms_df, trendlines_suporte_df, distancia_maxima, num_pontos)
 
-    # mapeados_trendlines_suporte_df.to_csv('dados_csv_produzidos/mapeados_trendlines_suporte.csv', index=True)
+    if salva_dados:
+        simulacao_name = f'janela_rsi_{janela_rsi} ordem_{ordem_str}, lookback_{lookback_str}, break_min_{break_min_str}'
+        file_name = f'simulações_individuais/{ticker_clean}/{simulacao_name}/mapeados_trendlines_suporte.csv'
+        mapeados_trendlines_suporte_df.to_csv(file_name, sep=";", decimal=",", index=False, encoding="utf-8")
 
-    # Eliminando as retas suporte que não foram mapeadas
+
+    # Eliminando as retas suporte que não foram mapeadas, exclui mapeado = 0
 
     expurgado_trendlines_suporte_df = mapeados_trendlines_suporte_df[mapeados_trendlines_suporte_df['mapeado'] != 0]
 
-    # expurgado_trendlines_suporte_df.to_csv('dados_csv_produzidos/expurgado_trendlines_suporte.csv', index=True)
+    if salva_dados:
+        simulacao_name = f'janela_rsi_{janela_rsi} ordem_{ordem_str}, lookback_{lookback_str}, break_min_{break_min_str}'
+        file_name = f'simulações_individuais/{ticker_clean}/{simulacao_name}/expurgado_trendlines_suporte.csv'
+        expurgado_trendlines_suporte_df.to_csv(file_name, sep=";", decimal=",", index=False, encoding="utf-8")
 
-
-    # Mapeando as retas resistência para encontrar as que passaram por três tops até o fim da janela que criou a reta
+    # Mapeando as retas resistencia para encontrar por quantos pontos elas passaram. Marcam mapeado = 1 se maior ou igual a pontos_min
+    # e marca mapeado = 0 se menor que pontos_min
 
     mapeados_trendlines_resistencia_df = mapear_retas_com_tops(tops_df, trendlines_resistencia_df, distancia_maxima, num_pontos)
 
-    # mapeados_trendlines_resistencia_df.to_csv('dados_csv_produzidos/mapeados_trendlines_suporte.csv', index=True)
+    if salva_dados:
+        simulacao_name = f'janela_rsi_{janela_rsi} ordem_{ordem_str}, lookback_{lookback_str}, break_min_{break_min_str}'
+        file_name = f'simulações_individuais/{ticker_clean}/{simulacao_name}/mapeados_trendlines_resistencia.csv'
+        mapeados_trendlines_resistencia_df.to_csv(file_name, sep=";", decimal=",", index=False, encoding="utf-8")
 
     # Eliminando as retas resistência que não foram mapeadas
 
     expurgado_trendlines_resistencia_df = mapeados_trendlines_resistencia_df[mapeados_trendlines_resistencia_df['mapeado'] != 0]
 
-    # expurgado_trendlines_resistencia_df.to_csv('dados_csv_produzidos/expurgado_trendlines_resistencia.csv', index=True)
+    if salva_dados:
+        simulacao_name = f'janela_rsi_{janela_rsi} ordem_{ordem_str}, lookback_{lookback_str}, break_min_{break_min_str}'
+        file_name = f'simulações_individuais/{ticker_clean}/{simulacao_name}/expurgado_trendlines_resistencia.csv'
+        expurgado_trendlines_resistencia_df.to_csv(file_name, sep=";", decimal=",", index=False, encoding="utf-8")    
 
 
 
-    # ---------------------- Início de código para geração de gráfico auxiliar, comentado para performance ----------------------
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+    # ------------------------------------------------------------------------------------------------------------------
+    # ------------------------------------------------------------------------------------------------------------------
+    # ---------------------- Início de código para geração de gráfico auxiliar (retas expurgadas) ----------------------
+    # ------------------------------------------------------------------------------------------------------------------
+    # ------------------------------------------------------------------------------------------------------------------
 
     if imprime_grafico:
 
         plt.style.use('default')
-        fig, (ax1, ax3) = plt.subplots(2, sharex=True, gridspec_kw={'height_ratios': [2, 1]})
+        fig, (ax1, ax3) = plt.subplots(2, sharex=True, gridspec_kw={'height_ratios': [2, 1]}, figsize=(16, 9))
 
         # ----------------------------------------------------------------   
         # Plotando o preço de fechamento
@@ -526,6 +642,12 @@ def simulacao(janela_rsi, ordem, lookback1, distancia_maxima, num_pontos, break_
         # ----------------------------------------------------------------   
         ax3.axhline(70, color='gray', linestyle='--', linewidth = 0.4)  # Linha de sobrecompra
         ax3.axhline(30, color='gray', linestyle='--', linewidth = 0.4)  # Linha de sobrevenda
+
+        # Configurando o eixo Y do RSI
+        ax3.set_yticks(range(0, 101, 5))  # Define as subescalas principais de 5 em 5 pontos
+        ax3.grid(which='major', axis='y', linestyle='-', linewidth=0.2, color='gray', alpha=0.7)  # Grades principais
+        ax3.grid(which='minor', axis='y', linestyle=':', linewidth=0.1, color='gray', alpha=0.5)  # Grades secundárias
+
 
         plt.legend()
         ax1.set_title(ticker_clean + " and RSI", color='black', fontsize=8)
@@ -624,12 +746,31 @@ def simulacao(janela_rsi, ordem, lookback1, distancia_maxima, num_pontos, break_
         # Salvando e plotando
         # ----------------------------------------------------------------
 
-        file_name = f'simulações_aplicadas_a_ativos/{ticker_clean}/{ticker_clean}_cenário_escolhido_retas_com_expurgo.png'
+        fig.subplots_adjust(
+            left=0.02,  # Margem esquerda
+            right=0.98,  # Margem direta
+            top=0.98,  # Margem superior
+            bottom=0.05,  # Margem inferior
+            hspace=0.02)  # Espaçamento vertical entre os gráficos
+        
+        file_name = f'simulações_individuais/{ticker_clean}/{simulacao_name}/retas_com_expurgo.png'
         fig.savefig(file_name, dpi=300)  # Salva a figura como um arquivo PNG com alta resolução
 
-        plt.show()
+        # plt.show()
 
-    # ---------------------- Fim de código para geração de gráfico auxiliar, comentado para performance ----------------------
+    # ------------------------------------------------------------------------------------------------------------------
+    # ------------------------------------------------------------------------------------------------------------------
+    # ---------------------- Fim de código para geração de gráfico auxiliar --------------------------------------------
+    # ------------------------------------------------------------------------------------------------------------------
+    # ------------------------------------------------------------------------------------------------------------------
+
+
+
+
+
+
+
+
 
 
 
@@ -639,31 +780,219 @@ def simulacao(janela_rsi, ordem, lookback1, distancia_maxima, num_pontos, break_
 
     # Eliminando as retasde suporte
 
-    eliminado_trendlines_suporte_df =   identificar_retas_similares_suporte(expurgado_trendlines_suporte_df)
+    eliminado_trendlines_suporte_df = identificar_retas_similares_suporte(expurgado_trendlines_suporte_df)
 
-    expurgado_trendlines_suporte_df['support_slope_rounded'] = expurgado_trendlines_suporte_df['support_slope'].round(3)
-
-    eliminado_trendlines_suporte_df = expurgado_trendlines_suporte_df.groupby(['indice_original_lower_pivot', 'support_slope_rounded']).agg({
-        'inicio_janela': 'min',
-        'fim_janela': 'min',
-        'support_intercept': 'first',
-        'num_zeros': 'min'}).reset_index()
-    # eliminado_trendlines_suporte_df.to_csv('dados_csv_produzidos/eliminado_trendlines_suporte.csv', index=True)
+    eliminado_trendlines_suporte_df['support_slope_rounded'] = eliminado_trendlines_suporte_df['support_slope'].round(5)
+    
+    if salva_dados:
+        simulacao_name = f'janela_rsi_{janela_rsi} ordem_{ordem_str}, lookback_{lookback_str}, break_min_{break_min_str}'
+        file_name = f'simulações_individuais/{ticker_clean}/{simulacao_name}/eliminado_trendlines_suporte.csv'
+        eliminado_trendlines_suporte_df.to_csv(file_name, sep=";", decimal=",", index=True, encoding="utf-8")    
+    
 
     # Eliminando as retas de resistência
 
     eliminado_trendlines_resistencia_df = identificar_retas_similares_resistencia(expurgado_trendlines_resistencia_df)
 
+    eliminado_trendlines_resistencia_df['resist_slope_rounded'] = eliminado_trendlines_resistencia_df['resist_slope'].round(5)
 
-    # eliminado_trendlines_resistencia_df.to_csv('dados_csv_produzidos/eliminado_trendlines_resistencia.csv', index=True)
+    # eliminado_trendlines_resistencia_df = eliminado_trendlines_resistencia_df.groupby(['indice_original_upper_pivot', 'resist_slope_rounded']).agg({
+    #     'inicio_janela': 'min',
+    #     'fim_janela': 'min',
+    #     'x_min': 'min',
+    #     'x_max' : 'max',
+    #     'resist_intercept': 'first',
+    #     'num_zeros': 'min'}).reset_index()
+    
+    if salva_dados:
+        simulacao_name = f'janela_rsi_{janela_rsi} ordem_{ordem_str}, lookback_{lookback_str}, break_min_{break_min_str}'
+        file_name = f'simulações_individuais/{ticker_clean}/{simulacao_name}/eliminado_trendlines_resistencia.csv'
+        eliminado_trendlines_resistencia_df.to_csv(file_name, sep=";", decimal=",", index=True, encoding="utf-8")   
 
-    expurgado_trendlines_resistencia_df['resist_slope_rounded'] = expurgado_trendlines_resistencia_df['resist_slope'].round(3)
-    eliminado_trendlines_resistencia_df = expurgado_trendlines_resistencia_df.groupby(['indice_original_upper_pivot', 'resist_slope_rounded']).agg({
-        'inicio_janela': 'min',
-        'fim_janela': 'min',
-        'resist_intercept': 'first',
-        'num_zeros': 'min'}).reset_index()
-    # eliminado_trendlines_resistencia_df.to_csv('dados_csv_produzidos/eliminado_trendlines_resistencia.csv', index=True)
+
+
+
+
+
+
+
+
+
+
+
+
+    # ------------------------------------------------------------------------------------------------------------------
+    # ------------------------------------------------------------------------------------------------------------------
+    # ---------------------- Início de código para geração de gráfico auxiliar (retas eliminadas) ----------------------
+    # ------------------------------------------------------------------------------------------------------------------
+    # ------------------------------------------------------------------------------------------------------------------
+
+    if imprime_grafico:
+
+        plt.style.use('default')
+        fig, (ax1, ax3) = plt.subplots(2, sharex=True, gridspec_kw={'height_ratios': [2, 1]}, figsize=(16, 9))
+
+        # ----------------------------------------------------------------   
+        # Plotando o preço de fechamento
+        # ----------------------------------------------------------------   
+
+        data['Close'].plot(ax=ax1, color='blue', label=ticker_clean + ' Close Price', linewidth = 0.4)
+
+        # ----------------------------------------------------------------   
+        # Plotando o RSI
+        # ----------------------------------------------------------------   
+
+        data['RSI'].plot(ax=ax3, color='purple', label='RSI', linewidth = 0.5)
+
+        # ----------------------------------------------------------------   
+        # Plotando as marcações horizontais
+        # ----------------------------------------------------------------   
+        ax3.axhline(70, color='gray', linestyle='--', linewidth = 0.4)  # Linha de sobrecompra
+        ax3.axhline(30, color='gray', linestyle='--', linewidth = 0.4)  # Linha de sobrevenda
+
+        # Configurando o eixo Y do RSI
+        ax3.set_yticks(range(0, 101, 5))  # Define as subescalas principais de 5 em 5 pontos
+        ax3.grid(which='major', axis='y', linestyle='-', linewidth=0.2, color='gray', alpha=0.7)  # Grades principais
+        ax3.grid(which='minor', axis='y', linestyle=':', linewidth=0.1, color='gray', alpha=0.5)  # Grades secundárias
+
+        # ----------------------------------------------------------------   
+        # Plotando as marcações verticais
+        # ----------------------------------------------------------------   
+        locator = MonthLocator()  # Localizador para marcar cada mês
+        formatter = DateFormatter('%b %Y')  # Formato para exibir mês e ano
+
+        # Aplicar as configurações ao eixo compartilhado
+        ax3.xaxis.set_major_locator(locator)
+        ax3.xaxis.set_major_formatter(formatter)
+
+        # Adicionar linhas de grade verticais correspondentes às marcações dos meses
+        ax1.grid(visible=True, which='major', axis='x', linestyle='--', linewidth=0.7, alpha=0.5)
+        ax3.grid(visible=True, which='major', axis='x', linestyle='--', linewidth=0.5, alpha=0.5)
+
+        plt.legend()
+        ax1.set_title(ticker_clean + " and RSI", color='black', fontsize=8)
+        ax1.legend(loc='upper left', fontsize=6)
+        ax3.legend(loc='upper left', fontsize=6)
+        ax3.set_ylim([0, 100])  # O RSI varia de 0 a 100
+
+        # ----------------------------------------------------------------   
+        # Plotando os topos e fundos no gráfico
+        # ----------------------------------------------------------------   
+
+        for top in tops_df.itertuples():
+            # Plotar cada topo no gráfico RSI usando a data correspondente
+            ax3.plot(idx[top.top_bottom_idx], data['RSI'][top.top_bottom_idx], marker='o', color='green', markersize=0.3)
+
+        for bottom in bottoms_df.itertuples():
+            # Plotar cada fundo no gráfico RSI usando a data correspondente
+            ax3.plot(idx[bottom.top_bottom_idx], data['RSI'][bottom.top_bottom_idx], marker='o', color='red', markersize=0.3)
+
+        # ----------------------------------------------------------------
+        # Ajustando o título e diminuir o tamanho da fonte
+        # ----------------------------------------------------------------
+        ax1.set_title(ticker_clean + " and RSI", color='black', fontsize=8)
+
+        # ----------------------------------------------------------------
+        # Reduzindo o tamanho da fonte dos valores da escala
+        # ----------------------------------------------------------------
+        ax1.tick_params(axis='both', which='major', labelsize=6)  # Tamanho da fonte dos ticks de ax1
+        ax3.tick_params(axis='both', which='major', labelsize=6)  # Tamanho da fonte dos ticks de ax3
+
+
+        # Obter as datas associadas aos valores do RSI
+        datas = data.index[len(data.index) - len(rsi_values):]
+
+        # ----------------------------------------------------------------   
+        # Plotando as retas de suporte do RSI
+        # ----------------------------------------------------------------   
+
+        for i in range(len(eliminado_trendlines_suporte_df)):
+            row = eliminado_trendlines_suporte_df.iloc[i]
+
+            x_start = int(row['inicio_janela'])
+            y_start = row['support_slope_rounded'] * x_start + row['support_intercept']
+
+            # Ajustar y_start se necessário
+            if y_start < 0:
+                x_start = max(0, min(len(datas) - 1, int(-row['support_intercept'] / row['support_slope_rounded'])))
+                y_start = row['support_slope_rounded'] * x_start + row['support_intercept']
+
+            x_end = min(len(datas)-1, int(row['x_max'])+int(len(datas)*0.05))
+            y_end = row['support_slope_rounded'] * x_end + row['support_intercept']
+
+            # Ajustar y_end se necessário
+            if y_end < 0:
+                x_end = max(0, min(len(datas) - 1, int(-row['support_intercept'] / row['support_slope_rounded'])))
+                y_end = row['support_slope_rounded'] * x_end + row['support_intercept']
+
+            # Obter datas de início e fim
+            data_start = datas[x_start]
+            data_end = datas[x_end]
+
+            # Desenhar o segmento de reta
+            ax3.plot([data_start, data_end], [y_start, y_end], color='r', linewidth=0.4)
+
+        # ----------------------------------------------------------------   
+        # Plotando as retas de resistência do RSI
+        # ----------------------------------------------------------------
+
+        for i in range(len(eliminado_trendlines_resistencia_df)):
+            row = eliminado_trendlines_resistencia_df.iloc[i]
+
+            x_start = int(row['inicio_janela'])
+            y_start = row['resist_slope_rounded'] * x_start + row['resist_intercept']
+
+            # Ajustar y_start se necessário
+            if y_start < 0:
+                x_start = max(0, min(len(datas) - 1, int(-row['resist_intercept'] / row['resist_slope_rounded'])))
+                y_start = row['resist_slope_rounded'] * x_start + row['resist_intercept']
+
+            x_end = min(len(datas)-1, int(row['fim_janela'])+int(len(datas)*0.05))
+            y_end = row['resist_slope_rounded'] * x_end + row['resist_intercept']
+
+            # Ajustar y_end se necessário
+            if y_end < 0:
+                x_end = max(0, min(len(datas) - 1, int(-row['resist_intercept'] / row['resist_slope'])))
+                y_end = row['resist_slope_rounded'] * x_end + row['resist_intercept']
+
+            # Obter datas de início e fim
+            data_start = datas[x_start]
+            data_end = datas[x_end]
+
+            # Desenhar o segmento de reta
+            ax3.plot([data_start, data_end], [y_start, y_end], color='green', linewidth=0.4)
+
+        # ----------------------------------------------------------------
+        # Salvando e plotando
+        # ----------------------------------------------------------------
+
+        fig.subplots_adjust(
+            left=0.02,  # Margem esquerda
+            right=0.98,  # Margem direta
+            top=0.98,  # Margem superior
+            bottom=0.05,  # Margem inferior
+            hspace=0.02)  # Espaçamento vertical entre os gráficos
+        
+        file_name = f'simulações_individuais/{ticker_clean}/{simulacao_name}/retas_com_eliminacao.png'
+        fig.savefig(file_name, dpi=300)  # Salva a figura como um arquivo PNG com alta resolução
+
+        # plt.show()
+
+    # --------------------------------------------------------------------------------------------
+    # --------------------------------------------------------------------------------------------
+    # ---------------------- Fim de código para geração de gráfico auxiliar ----------------------
+    # --------------------------------------------------------------------------------------------
+    # --------------------------------------------------------------------------------------------
+
+
+
+
+
+
+
+
+
+
 
 
 
@@ -676,40 +1005,51 @@ def simulacao(janela_rsi, ordem, lookback1, distancia_maxima, num_pontos, break_
     breaks_down_df = pd.DataFrame(columns=['ponto', 'evento', 'reta' ,'x_rompimento', 'y_rompimento', 'inicio_janela', 'fim_janela'])
 
     # Percorrendo o gráfico para encontrar os breaks
+    # Passea por todos os valores de x de ppt até o fim
 
     for i in range(pontos_para_tras, len(rsi_df)):
 
-        # Criando a lista de pontos
+        # Examino o ponto atual até o ppt pontos anteriores
         pontos = [(i - pontos_para_tras, rsi_df.iloc[i - pontos_para_tras]['RSI']), 
             (i, rsi_df.iloc[i]['RSI'])]
         
-        # Percorrendo as linhas de tendência de suporte
+        # Percorrendo todas as linhas de tendência de suporte não eliminadas
         for idx, linha in eliminado_trendlines_suporte_df.iterrows():
             # Extraindo os valores da reta e a fim_janela para armazenar
-            fim_janela = linha['fim_janela']
             inicio_janela = linha['inicio_janela']
+            fim_janela = inicio_janela + lookback1
 
-            # Verificando se i é maior do que fim_janela + ordem
-            if i > fim_janela + ordem*0:
+            # Verifica se i é maior do que fim_janela + ordem
+            # Só posso testar retas que já tenham sido criadas no momento i-1, caso eu tivesse percorrido todos os pontos anteriores
+            # Para isso na consolidação das retas em um mesmo pivot point, tenho que armazenar a menor fim_janela
+            # ou tenho que pega a menor inicio_janela e somar o lookback1
+
+            if i > fim_janela + ordem:
                 slope = linha['support_slope_rounded']
                 intercept = linha['support_intercept']
                 # Verificando se o cruzamento ocorreu e salvando o cruzamento
                 cruzou, x_rompimento, y_rompimento = checar_cruzou_para_baixo( pontos, slope, intercept, break_min, rsi_df)
-                if cruzou:
-                        breaks_down_df = breaks_down_df._append({'ponto': int(i),
-                                                        'evento': 2,
-                                                        'reta': idx,
-                                                        'x_rompimento': x_rompimento,
-                                                        'y_rompimento': y_rompimento,
-                                                        'inicio_janela':inicio_janela,
-                                                        'fim_janela': fim_janela}, ignore_index=True)
-                        
-    # breaks_down_df.to_csv('dados_csv_produzidos/breaks_down_sem_eliminacao.csv', index=True)
+                if cruzou:                
+                    breaks_down_df = breaks_down_df._append({'ponto': int(i),
+                                                            'evento': 2,
+                                                            'reta': idx,
+                                                            'x_rompimento': x_rompimento,
+                                                            'y_rompimento': y_rompimento,
+                                                            'inicio_janela':inicio_janela,
+                                                            'fim_janela': fim_janela}, ignore_index=True)
+                            
+    if salva_dados:
+        simulacao_name = f'janela_rsi_{janela_rsi} ordem_{ordem_str}, lookback_{lookback_str}, break_min_{break_min_str}'
+        file_name = f'simulações_individuais/{ticker_clean}/{simulacao_name}/breaks_down.csv'
+        breaks_down_df.to_csv(file_name, sep=";", decimal=",", index=True, encoding="utf-8")   
 
     primeiros_breaks_down_df = breaks_down_df.loc[breaks_down_df.groupby('reta')['x_rompimento'].idxmin()]
     primeiros_breaks_down_df = primeiros_breaks_down_df.loc[primeiros_breaks_down_df.groupby('x_rompimento')['fim_janela'].idxmin()]
 
-    # primeiros_breaks_down_df.to_csv('dados_csv_produzidos/breaks_down.csv', index=True)
+    if salva_dados:
+        simulacao_name = f'janela_rsi_{janela_rsi} ordem_{ordem_str}, lookback_{lookback_str}, break_min_{break_min_str}'
+        file_name = f'simulações_individuais/{ticker_clean}/{simulacao_name}/primeiros_breaks_down.csv'
+        primeiros_breaks_down_df.to_csv(file_name, sep=";", decimal=",", index=True, encoding="utf-8")   
 
     # ------------------------------------------------------------------------
     # Encontrando breaks para cima nas retas de resistencia
@@ -727,8 +1067,13 @@ def simulacao(janela_rsi, ordem, lookback1, distancia_maxima, num_pontos, break_
         # Percorrendo as linhas de tendência de resistência
         for idx, linha in eliminado_trendlines_resistencia_df.iterrows():
             # Extraindo os valores da reta e a fim_janela
-            fim_janela = linha['fim_janela']
             inicio_janela = linha['inicio_janela']
+            fim_janela = inicio_janela + lookback1
+
+            # Verifica se i é maior do que fim_janela + ordem
+            # Só posso testar retas que já tenham sido criadas no momento i-1, caso eu tivesse percorrido todos os pontos anteriores
+            # Para isso na consolidação das retas em um mesmo pivot point, tenho que armazenar a menor fim_janela
+            # ou tenho que pega a menor inicio_janela e somar o lookback1            
 
             # Verificando se i é maior do que fim_janela + ordem
             if i > fim_janela + ordem:
@@ -736,6 +1081,7 @@ def simulacao(janela_rsi, ordem, lookback1, distancia_maxima, num_pontos, break_
                 intercept = linha['resist_intercept']
                 # Verificando se o cruzamento ocorreu e salvando o cruzamento
                 cruzou, x_rompimento, y_rompimento = checar_cruzou_para_cima( pontos, slope, intercept, break_min, rsi_df)
+                
                 if cruzou:
                     breaks_up_df = breaks_up_df._append({'ponto': int(i),
                                                     'evento': 1,
@@ -745,13 +1091,18 @@ def simulacao(janela_rsi, ordem, lookback1, distancia_maxima, num_pontos, break_
                                                     'inicio_janela':inicio_janela,
                                                     'fim_janela': fim_janela}, ignore_index=True)
 
-
-    # breaks_up_df.to_csv('dados_csv_produzidos/breaks_up_sem_eliminacao.csv', index=True)
+    if salva_dados:
+        simulacao_name = f'janela_rsi_{janela_rsi} ordem_{ordem_str}, lookback_{lookback_str}, break_min_{break_min_str}'
+        file_name = f'simulações_individuais/{ticker_clean}/{simulacao_name}/breaks_up.csv'
+        breaks_up_df.to_csv(file_name, sep=";", decimal=",", index=True, encoding="utf-8")
 
     primeiros_breaks_up_df = breaks_up_df.loc[breaks_up_df.groupby('reta')['x_rompimento'].idxmin()]
     primeiros_breaks_up_df = primeiros_breaks_up_df.loc[primeiros_breaks_up_df.groupby('x_rompimento')['fim_janela'].idxmin()]
 
-    # primeiros_breaks_up_df.to_csv('dados_csv_produzidos/breaks_up.csv', index=True)
+    if salva_dados:
+        simulacao_name = f'janela_rsi_{janela_rsi} ordem_{ordem_str}, lookback_{lookback_str}, break_min_{break_min_str}'
+        file_name = f'simulações_individuais/{ticker_clean}/{simulacao_name}/primeiros_breaks_up.csv'
+        primeiros_breaks_up_df.to_csv(file_name, sep=";", decimal=",", index=True, encoding="utf-8")
 
     # Concatenando os dois DataFrames com os breaks para criar uma base única
 
@@ -764,13 +1115,29 @@ def simulacao(janela_rsi, ordem, lookback1, distancia_maxima, num_pontos, break_
     breaks_df = breaks_df.reset_index(drop=True)
 
     # # Salvando para inspeção
-    # breaks_df.to_csv('dados_csv_produzidos/breaks.csv', index=True)
 
-    # ---------------------- Início do código para geração de gráfico auxiliar, comentado para performance ----------------------
+    if salva_dados:
+        simulacao_name = f'janela_rsi_{janela_rsi} ordem_{ordem_str}, lookback_{lookback_str}, break_min_{break_min_str}'
+        file_name = f'simulações_individuais/{ticker_clean}/{simulacao_name}/breaks.csv'
+        breaks_df.to_csv(file_name, sep=";", decimal=",", index=True, encoding="utf-8")
+
+
+
+
+
+
+
+
+
+    # ------------------------------------------------------------------------------------------------------------------
+    # ------------------------------------------------------------------------------------------------------------------
+    # ---------------------- Início do código para geração de gráfico auxiliar (rompimentos) ---------------------------
+    # ------------------------------------------------------------------------------------------------------------------
+    # ------------------------------------------------------------------------------------------------------------------
 
     if imprime_grafico:
         plt.style.use('default')
-        fig, (ax1, ax3) = plt.subplots(2, sharex=True, gridspec_kw={'height_ratios': [2, 1]})
+        fig, (ax1, ax3) = plt.subplots(2, sharex=True, gridspec_kw={'height_ratios': [2, 1]}, figsize=(16, 9))
 
         # ----------------------------------------------------------------   
         # Plotando o preço de fechamento
@@ -785,16 +1152,39 @@ def simulacao(janela_rsi, ordem, lookback1, distancia_maxima, num_pontos, break_
         data['RSI'].plot(ax=ax3, color='purple', label='RSI', linewidth = 0.5)
 
         # ----------------------------------------------------------------   
-        # Plotando o as linhas de sobrecompra (RSI = 70) e sobrevenda (RSI = 30)
+        # Plotando as marcações horizontais
         # ----------------------------------------------------------------   
         ax3.axhline(70, color='gray', linestyle='--', linewidth = 0.4)  # Linha de sobrecompra
         ax3.axhline(30, color='gray', linestyle='--', linewidth = 0.4)  # Linha de sobrevenda
+
+        # Configurando o eixo Y do RSI
+        ax3.set_yticks(range(0, 101, 5))  # Define as subescalas principais de 5 em 5 pontos
+        ax3.grid(which='major', axis='y', linestyle='-', linewidth=0.2, color='gray', alpha=0.7)  # Grades principais
+        ax3.grid(which='minor', axis='y', linestyle=':', linewidth=0.1, color='gray', alpha=0.5)  # Grades secundárias
 
         plt.legend()
         ax1.set_title(ticker_clean + " and RSI", color='black', fontsize=8)
         ax1.legend(loc='upper left', fontsize=6)
         ax3.legend(loc='upper left', fontsize=6)
         ax3.set_ylim([0, 100])  # O RSI varia de 0 a 100
+
+        # ----------------------------------------------------------------   
+        # Plotando as marcações verticais
+        # ----------------------------------------------------------------   
+        locator = MonthLocator()  # Localizador para marcar cada mês
+        formatter = DateFormatter('%b %Y')  # Formato para exibir mês e ano
+
+        # Aplicar as configurações ao eixo compartilhado
+        ax3.xaxis.set_major_locator(locator)
+        ax3.xaxis.set_major_formatter(formatter)
+
+        # Adicionar linhas de grade verticais correspondentes às marcações dos meses
+        ax1.grid(visible=True, which='major', axis='x', linestyle='--', linewidth=0.7, alpha=0.5)
+        ax3.grid(visible=True, which='major', axis='x', linestyle='--', linewidth=0.5, alpha=0.5)
+
+        # Ajustar rotação das marcações de data para melhor visualização
+        plt.setp(ax3.xaxis.get_majorticklabels(), rotation=45, ha='right', fontsize=6)
+
 
         # ----------------------------------------------------------------   
         # Plotar os topos e fundos no gráfico
@@ -817,61 +1207,61 @@ def simulacao(janela_rsi, ordem, lookback1, distancia_maxima, num_pontos, break_
         # Plotando as retas de suporte do RSI
         # ----------------------------------------------------------------   
 
-        for i in range(len(expurgado_trendlines_suporte_df)):
-            row = expurgado_trendlines_suporte_df.iloc[i]
+        for i in range(len(eliminado_trendlines_suporte_df)):
+            row = eliminado_trendlines_suporte_df.iloc[i]
 
             x_start = int(row['inicio_janela'])
-            y_start = row['support_slope'] * x_start + row['support_intercept']
+            y_start = row['support_slope_rounded'] * x_start + row['support_intercept']
 
             # Ajustar y_start se necessário
             if y_start < 0:
-                x_start = max(0, min(len(datas) - 1, int(-row['support_intercept'] / row['support_slope'])))
-                y_start = row['support_slope'] * x_start + row['support_intercept']
+                x_start = max(0, min(len(datas) - 1, int(-row['support_intercept'] / row['support_slope_rounded'])))
+                y_start = row['support_slope_rounded'] * x_start + row['support_intercept']
 
-            x_end = min(len(datas)-1, int(row['x_max']))
-            y_end = row['support_slope'] * x_end + row['support_intercept']
+            x_end = min(len(datas)-1, int(row['x_max'])+int(len(datas)*0.05))
+            y_end = row['support_slope_rounded'] * x_end + row['support_intercept']
 
             # Ajustar y_end se necessário
             if y_end < 0:
-                x_end = max(0, min(len(datas) - 1, int(-row['support_intercept'] / row['support_slope'])))
-                y_end = row['support_slope'] * x_end + row['support_intercept']
+                x_end = max(0, min(len(datas) - 1, int(-row['support_intercept'] / row['support_slope_rounded'])))
+                y_end = row['support_slope_rounded'] * x_end + row['support_intercept']
 
             # Obter datas de início e fim
             data_start = datas[x_start]
             data_end = datas[x_end]
 
             # Desenhar o segmento de reta
-            ax3.plot([data_start, data_end], [y_start, y_end], color='r', linewidth=0.2)
+            ax3.plot([data_start, data_end], [y_start, y_end], color='r', linewidth=0.4)
 
         # ----------------------------------------------------------------   
         # Plotando as retas de resistência do RSI
         # ----------------------------------------------------------------
 
-        for i in range(len(expurgado_trendlines_resistencia_df)):
-            row = expurgado_trendlines_resistencia_df.iloc[i]
+        for i in range(len(eliminado_trendlines_resistencia_df)):
+            row = eliminado_trendlines_resistencia_df.iloc[i]
 
             x_start = int(row['inicio_janela'])
-            y_start = row['resist_slope'] * x_start + row['resist_intercept']
+            y_start = row['resist_slope_rounded'] * x_start + row['resist_intercept']
 
             # Ajustar y_start se necessário
             if y_start < 0:
-                x_start = max(0, min(len(datas) - 1, int(-row['resist_intercept'] / row['resist_slope'])))
-                y_start = row['resist_slope'] * x_start + row['resist_intercept']
+                x_start = max(0, min(len(datas) - 1, int(-row['resist_intercept'] / row['resist_slope_rounded'])))
+                y_start = row['resist_slope_rounded'] * x_start + row['resist_intercept']
 
-            x_end = min(len(datas)-1, int(row['fim_janela']))
-            y_end = row['resist_slope'] * x_end + row['resist_intercept']
+            x_end = min(len(datas)-1, int(row['fim_janela'])+int(len(datas)*0.05))
+            y_end = row['resist_slope_rounded'] * x_end + row['resist_intercept']
 
             # Ajustar y_end se necessário
             if y_end < 0:
                 x_end = max(0, min(len(datas) - 1, int(-row['resist_intercept'] / row['resist_slope'])))
-                y_end = row['resist_slope'] * x_end + row['resist_intercept']
+                y_end = row['resist_slope_rounded'] * x_end + row['resist_intercept']
 
             # Obter datas de início e fim
             data_start = datas[x_start]
             data_end = datas[x_end]
 
             # Desenhar o segmento de reta
-            ax3.plot([data_start, data_end], [y_start, y_end], color='green', linewidth=0.2)
+            ax3.plot([data_start, data_end], [y_start, y_end], color='green', linewidth=0.4)
 
         # ----------------------------------------------------------------
         # Desenhando as linhas indicativas de rompimento
@@ -883,8 +1273,8 @@ def simulacao(janela_rsi, ordem, lookback1, distancia_maxima, num_pontos, break_
             data_x_rompimento = data.index[int(x_rompimento)]
 
             # Adicionar linha vertical vermelha para os rompimentos das linhas de resistência
-            ax1.axvline(x=data_x_rompimento, color='red', linestyle='--', linewidth=0.3)
-            ax3.axvline(x=data_x_rompimento, color='red', linestyle='--', linewidth=0.3)
+            ax1.axvline(x=data_x_rompimento, color='red', linestyle='--', linewidth=0.4)
+            ax3.axvline(x=data_x_rompimento, color='red', linestyle='--', linewidth=0.4)
 
         for _, row in primeiros_breaks_up_df.iterrows():
             x_rompimento = row['x_rompimento']
@@ -893,8 +1283,8 @@ def simulacao(janela_rsi, ordem, lookback1, distancia_maxima, num_pontos, break_
             data_x_rompimento = data.index[int(x_rompimento)]
 
             # Adicionar linha vertical azul para os rompimentos das linhas de suporte
-            ax1.axvline(x=data_x_rompimento, color='blue', linestyle='--', linewidth=0.3)
-            ax3.axvline(x=data_x_rompimento, color='blue', linestyle='--', linewidth=0.3)
+            ax1.axvline(x=data_x_rompimento, color='blue', linestyle='--', linewidth=0.4)
+            ax3.axvline(x=data_x_rompimento, color='blue', linestyle='--', linewidth=0.4)
 
         # ----------------------------------------------------------------
         # Ajustando o título e diminuir o tamanho da fonte
@@ -911,11 +1301,29 @@ def simulacao(janela_rsi, ordem, lookback1, distancia_maxima, num_pontos, break_
         # Salvando e plotando
         # ----------------------------------------------------------------
 
-        file_name = f'simulações_aplicadas_a_ativos/{ticker_clean}/{ticker_clean}_cenário_escolhido_rompimentos.png'
-        fig.savefig(file_name, dpi=300)  # Salva a figura como um arquivo PNG com alta resolução
-        plt.show()
 
-    # ---------------------- Fim do código para geração de gráfico auxiliar, comentado para performance ----------------------
+        fig.subplots_adjust(
+            left=0.02,  # Margem esquerda
+            right=0.98,  # Margem direta
+            top=0.98,  # Margem superior
+            bottom=0.05,  # Margem inferior
+            hspace=0.02)  # Espaçamento vertical entre os gráficos
+                
+        file_name = f'simulações_individuais/{ticker_clean}/{simulacao_name}/rompimentos.png'
+        fig.savefig(file_name, dpi=300)  # Salva a figura como um arquivo PNG com alta resolução
+       
+        # plt.show()
+
+    # ------------------------------------------------------------------------------------------------------------------
+    # ------------------------------------------------------------------------------------------------------------------
+    # ---------------------- Fim do código para geração de gráfico auxiliar, comentado para performance ----------------
+    # ------------------------------------------------------------------------------------------------------------------
+    # ------------------------------------------------------------------------------------------------------------------
+
+
+
+
+
 
     return breaks_df
 
