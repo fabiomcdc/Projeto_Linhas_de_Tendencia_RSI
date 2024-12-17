@@ -1143,19 +1143,19 @@ def simulacao(janela_rsi,
         # Plotando o preço de fechamento
         # ----------------------------------------------------------------   
 
-        data['Close'].plot(ax=ax1, color='blue', label=ticker_clean + ' Close Price', linewidth = 0.3)
+        data['Close'].plot(ax=ax1, color='black', label=ticker_clean + ' Close Price', linewidth = 0.7)
 
         # ----------------------------------------------------------------   
         # Plotando o RSI
         # ----------------------------------------------------------------   
 
-        data['RSI'].plot(ax=ax3, color='purple', label='RSI', linewidth = 0.5)
+        data['RSI'].plot(ax=ax3, color='purple', label='RSI', linewidth = 0.7)
 
         # ----------------------------------------------------------------   
         # Plotando as marcações horizontais
         # ----------------------------------------------------------------   
-        ax3.axhline(70, color='gray', linestyle='--', linewidth = 0.4)  # Linha de sobrecompra
-        ax3.axhline(30, color='gray', linestyle='--', linewidth = 0.4)  # Linha de sobrevenda
+        ax3.axhline(70, color='gray', linestyle='--', linewidth = 0.3)  # Linha de sobrecompra
+        ax3.axhline(30, color='gray', linestyle='--', linewidth = 0.3)  # Linha de sobrevenda
 
         # Configurando o eixo Y do RSI
         ax3.set_yticks(range(0, 101, 5))  # Define as subescalas principais de 5 em 5 pontos
@@ -1273,8 +1273,8 @@ def simulacao(janela_rsi,
             data_x_rompimento = data.index[int(x_rompimento)]
 
             # Adicionar linha vertical vermelha para os rompimentos das linhas de resistência
-            ax1.axvline(x=data_x_rompimento, color='red', linestyle='--', linewidth=0.4)
-            ax3.axvline(x=data_x_rompimento, color='red', linestyle='--', linewidth=0.4)
+            ax1.axvline(x=data_x_rompimento, color='red', linestyle='--', linewidth=0.5)
+            ax3.axvline(x=data_x_rompimento, color='red', linestyle='--', linewidth=0.5)
 
         for _, row in primeiros_breaks_up_df.iterrows():
             x_rompimento = row['x_rompimento']
@@ -1283,8 +1283,8 @@ def simulacao(janela_rsi,
             data_x_rompimento = data.index[int(x_rompimento)]
 
             # Adicionar linha vertical azul para os rompimentos das linhas de suporte
-            ax1.axvline(x=data_x_rompimento, color='blue', linestyle='--', linewidth=0.4)
-            ax3.axvline(x=data_x_rompimento, color='blue', linestyle='--', linewidth=0.4)
+            ax1.axvline(x=data_x_rompimento, color='blue', linestyle='--', linewidth=0.5)
+            ax3.axvline(x=data_x_rompimento, color='blue', linestyle='--', linewidth=0.5)
 
         # ----------------------------------------------------------------
         # Ajustando o título e diminuir o tamanho da fonte
@@ -1305,7 +1305,7 @@ def simulacao(janela_rsi,
         fig.subplots_adjust(
             left=0.02,  # Margem esquerda
             right=0.98,  # Margem direta
-            top=0.98,  # Margem superior
+            top=0.96,  # Margem superior
             bottom=0.05,  # Margem inferior
             hspace=0.02)  # Espaçamento vertical entre os gráficos
                 

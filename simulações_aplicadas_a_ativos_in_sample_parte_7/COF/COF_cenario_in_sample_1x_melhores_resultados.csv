@@ -1,0 +1,5 @@
+;ativo;cenario;variavel;melhor_valor;media_de_pontos
+0;COF;cenario_in_sample_1x;janela_rsi;21;4,393616787981805
+1;COF;cenario_in_sample_1x;ordem;2;5,932200376193775
+2;COF;cenario_in_sample_1x;lookback;50;5,509962107429271
+3;COF;cenario_in_sample_1x;break_min;4;5,412262058927529

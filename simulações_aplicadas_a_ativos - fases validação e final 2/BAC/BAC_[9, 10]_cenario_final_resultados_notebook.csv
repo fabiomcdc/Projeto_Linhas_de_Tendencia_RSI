@@ -1,0 +1,3 @@
+;janela_rsi;ordem;lookback;d_max;num_pontos;break_min;ppt;sl;pt;ativo;cenario;return_ann;sharpe_ratio;max_drawdown;trades
+0;28;3;80;2;3;3;6;0,01;0,05;BAC;out_of_sample_final_1;4,701815071308468;0,609306699704391;-8,51972081350768;19,0
+1;28;3;80;2;3;3;6;0,01;0,05;BAC;out_of_sample_final_2;18,190168050921727;1,4625644270408609;-5,902296029833021;19,0

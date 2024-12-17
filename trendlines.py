@@ -173,7 +173,8 @@ def mapear_retas_com_bottoms(bottoms, retas, dist_min, num_pontos):
         fim_janela = retas['fim_janela'].iloc[num_reta]
         num_reta += 1
         for i, valor in enumerate(coluna_valores):
-            if mapeamento_suporte.index[i] <=  fim_janela and mapeamento_suporte.index[i] >=  inicio_janela:
+            # if mapeamento_suporte.index[i] <=  fim_janela and mapeamento_suporte.index[i] >=  inicio_janela:
+            if mapeamento_suporte.index[i] <=  fim_janela:
                 if valor == 0:
                     if x_min is None: # primeiro 0 da sequencia
                         x_min = mapeamento_suporte.index[i]
@@ -210,7 +211,7 @@ def mapear_retas_com_bottoms(bottoms, retas, dist_min, num_pontos):
         retas.loc[retas['indice'] == coluna, 'num_zeros'] = maior_zeros
 
     
-    retas.to_csv('dados_csv_produzidos/retas_suporte.csv', index=True)
+    # retas.to_csv('dados_csv_produzidos/retas_suporte.csv', index=True)
     
     return retas
 
@@ -249,7 +250,8 @@ def mapear_retas_com_tops(tops, retas, dist_min, num_pontos):
         fim_janela = retas['fim_janela'].iloc[num_reta]
         num_reta += 1
         for i, valor in enumerate(coluna_valores):
-            if mapeamento_resistencia.index[i] <=  fim_janela and mapeamento_resistencia.index[i] >=  inicio_janela:
+            # if mapeamento_resistencia.index[i] <=  fim_janela and mapeamento_resistencia.index[i] >=  inicio_janela:
+            if mapeamento_resistencia.index[i] <=  fim_janela:                
                 if valor == 0:
                     if x_min is None: # primeiro 0 da sequencia
                         x_min = mapeamento_resistencia.index[i]

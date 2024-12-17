@@ -181,12 +181,12 @@ def simulacao(janela_rsi,
     # Construção das retas de resistência para as janelas de observação
     # ---------------------------------------------------------------------
 
-    # Estabelecendo contador e ponto inicial
+    # Estabelece contador e ponto inicial
 
     contador_janela = 0
     borda_esquerda = tops_df['top_bottom_idx'].iloc[0]
 
-    # Inicializando DataFrames
+    # Inicializa DataFrames
     resist_slope = [np.nan] * len(rsi_values)
     colunas_resistencia = ['indice', 'indice_original_upper_pivot','valor_rsi', 'resist_slope', 'resist_intercept', 'inicio_janela', 'fim_janela']
     trendlines_resistencia_df = pd.DataFrame(columns=colunas_resistencia)
@@ -304,14 +304,7 @@ def simulacao(janela_rsi,
 
     eliminado_trendlines_resistencia_df['resist_slope_rounded'] = eliminado_trendlines_resistencia_df['resist_slope'].round(5)
 
-    # eliminado_trendlines_resistencia_df = eliminado_trendlines_resistencia_df.groupby(['indice_original_upper_pivot', 'resist_slope_rounded']).agg({
-    #     'inicio_janela': 'min',
-    #     'fim_janela': 'min',
-    #     'x_min': 'min',
-    #     'x_max' : 'max',
-    #     'resist_intercept': 'first',
-    #     'num_zeros': 'min'}).reset_index()
-    
+  
     # ------------------------------------------------------------------------
     # Encontrando breaks para baixo nas retas suporte
     # ------------------------------------------------------------------------

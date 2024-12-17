@@ -1,0 +1,2 @@
+;janela_rsi;ordem;lookback;d_max;num_pontos;break_min;ppt;sl;pt;ind;start_date;end_date;final_balance;return_%;return_ann_%;sharpe_ratio;sortino_ratio;volatility;max_drawdown_%;trades;win_rate_%;profit_factor;avg_trade_return
+0;28;3;50;2;3;3;6;0,02;0,05;14;2011-01-15;2012-10-29;9827892,74991553;-1,721072500844691;-0,9465480408041849;-0,0946405256826106;-0,14436713913068877;10,001508698066173;-10,748969676483512;12;41,66666666666667;0,9664847472978644;-0,14457533292803193

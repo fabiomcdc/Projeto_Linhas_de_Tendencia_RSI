@@ -86,14 +86,18 @@ indices = {
 
 ativo_vals = range(1,51)
 
-# Criação do DataFrame para armazenar os resultados do cenario_in_sample_1x do ativo sendo simulado
+# Consolidando todos os resultados a partir de simulações_aplicadas_a_ativos - fases validação e final 4 ---------------------------------------------------------
+
+
+# Criação do DataFrame para armazenar os resultados do cenario_validacao para todos os ativos
+
 resultados_consolidados = pd.DataFrame(columns=[
+    'num_pontos',
     'janela_rsi',
     'ordem',
     'lookback',
-    'd_max',
-    'num_pontos',
     'break_min',
+    'd_max',
     'ppt',
     'sl',
     'pt',
@@ -110,11 +114,8 @@ for ativo in ativo_vals: # aqui começa o loop ativo a ativo
 
     ticker = indices.get(ativo)
     ticker_clean = ticker.replace("^", "")
-
-
-    # simulações_aplicadas_a_ativos - RSI 21 e 28 ---------------------------------------------------------
     
-    folder_path = f'simulações_aplicadas_a_ativos/{ticker_clean}'
+    folder_path = f'simulações_aplicadas_a_ativos - fases validação e final 4/{ticker_clean}'
     file_name = f'{folder_path}/{ticker_clean}_cenario_validacao_resultados.csv'
 
     print("Carregando  ,", file_name)
@@ -125,12 +126,12 @@ for ativo in ativo_vals: # aqui começa o loop ativo a ativo
 
         # Criação de uma nova linha com os dados extraídos de cada linha do DataFrame
         nova_linha = {
+            'num_pontos': row['num_pontos'],
             'janela_rsi': row['janela_rsi'],
             'ordem': row['ordem'],
             'lookback': row['lookback'],
-            'd_max': row['d_max'],
-            'num_pontos': row['num_pontos'],
             'break_min': row['break_min'],
+            'd_max': row['d_max'],
             'ppt': row['ppt'],
             'sl': row['sl'],
             'pt': row['pt'],
@@ -150,23 +151,27 @@ for ativo in ativo_vals: # aqui começa o loop ativo a ativo
 
 # Salva o arquivo com os resultados consolidados
 
-folder_path = f'simulações_aplicadas_a_ativos/'
+folder_path = f'simulações_aplicadas_a_ativos - fases validação e final 4/'
 file_name_resultado_cenário = f'{folder_path}/resultados_consolidados_validacao.csv'
 resultados_consolidados.to_csv(file_name_resultado_cenário, sep=";", decimal=",", index=True, encoding="utf-8")
 
 
-# Criação do DataFrame para armazenar os resultados do cenario_in_sample_1x do ativo sendo simulado
+
+# Consolidandoos melhores resultados a partir de simulações_aplicadas_a_ativos - fases validação e final 2 ---------------------------------------------------------
+
+# Criação do DataFrame para armazenar os resultados com as melhores médias para todos os ativos
+
 resultados_consolidados_melhores_media = pd.DataFrame(columns=[
+    'ativo',
+    'num_pontos',
     'janela_rsi',
     'ordem',
     'lookback',
-    'd_max',
-    'num_pontos',
     'break_min',
+    'd_max',
     'ppt',
     'sl',
     'pt',
-    'ativo',
     'media_pontos_ponderados',
 ])
 
@@ -177,9 +182,9 @@ for ativo in ativo_vals: # aqui começa o loop ativo a ativo
     ticker_clean = ticker.replace("^", "")
 
 
-    # simulações_aplicadas_a_ativos - RSI 21 e 28 ---------------------------------------------------------
+    # Consolidando melhores resultados a partir de simulações_aplicadas_a_ativos - fases validação e final 4 ---------------------------------------------------------
     
-    folder_path = f'simulações_aplicadas_a_ativos/{ticker_clean}'
+    folder_path = f'simulações_aplicadas_a_ativos - fases validação e final 4/{ticker_clean}'
     file_name = f'{folder_path}/{ticker_clean}_cenario_validacao_melhor_resultado.csv'
 
     print("Carregando  ,", file_name)
@@ -190,16 +195,16 @@ for ativo in ativo_vals: # aqui começa o loop ativo a ativo
 
         # Criação de uma nova linha com os dados extraídos de cada linha do DataFrame
         nova_linha = {
+            'ativo': row['ativo'],
+            'num_pontos': row['num_pontos'],
             'janela_rsi': row['janela_rsi'],
             'ordem': row['ordem'],
             'lookback': row['lookback'],
-            'd_max': row['d_max'],
-            'num_pontos': row['num_pontos'],
             'break_min': row['break_min'],
+            'd_max': row['d_max'],
             'ppt': row['ppt'],
             'sl': row['sl'],
             'pt': row['pt'],
-            'ativo': row['ativo'],
             'media_pontos_ponderados': row['media_pontos_ponderados'],
         }
 
@@ -209,8 +214,9 @@ for ativo in ativo_vals: # aqui começa o loop ativo a ativo
             ignore_index=True
         )
 
-# Salva o arquivo com os resultados consolidados
 
-folder_path = f'simulações_aplicadas_a_ativos/'
+# Salva os arquivos com os resultados consolidados
+
+folder_path = f'simulações_aplicadas_a_ativos - fases validação e final 4/'
 file_name_resultado_cenário = f'{folder_path}/resultados_consolidados_validacao_melhores_medias.csv'
 resultados_consolidados_melhores_media.to_csv(file_name_resultado_cenário, sep=";", decimal=",", index=True, encoding="utf-8")

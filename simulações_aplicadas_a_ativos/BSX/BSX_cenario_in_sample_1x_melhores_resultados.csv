@@ -1,5 +1,0 @@
-;ativo;cenario;variavel;melhor_valor;media_de_pontos
-0;BSX;cenario_in_sample_1x;janela_rsi;49;7,1652341671496576
-1;BSX;cenario_in_sample_1x;ordem;3;5,550924115301981
-2;BSX;cenario_in_sample_1x;lookback;50;5,510316582866582
-3;BSX;cenario_in_sample_1x;break_min;3;5,523505001589225

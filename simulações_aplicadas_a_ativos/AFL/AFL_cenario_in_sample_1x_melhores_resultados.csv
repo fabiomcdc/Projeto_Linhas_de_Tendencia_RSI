@@ -1,5 +1,0 @@
-;ativo;cenario;variavel;melhor_valor;media_de_pontos
-0;AFL;cenario_in_sample_1x;janela_rsi;35;6,504192316856536
-1;AFL;cenario_in_sample_1x;ordem;3;5,568294098868457
-2;AFL;cenario_in_sample_1x;lookback;50;5,965048319762491
-3;AFL;cenario_in_sample_1x;break_min;3;5,2806492964188125

@@ -189,7 +189,7 @@ indices = {
 # }
 
 
-ind = 1
+ind = 29
 
 ticker = indices.get(ind)
 ticker_clean = ticker.replace("^", "")
@@ -211,8 +211,8 @@ for intervalo_simulado in intervalo_simulado_vals:
         
         case 0: # ------------ Teste Unitári com gráfico ----------------------------------
 
-            start_date = "2008-01-15"
-            end_date = "2013-10-29"
+            start_date = "2000-01-01"
+            end_date = "2005-08-19"
 
             start_date_gráfico = f"{pd.Timestamp(start_date).year if pd.Timestamp(start_date).month >= 1 else pd.Timestamp(start_date).year - 1}-01-01"
             # start_date_gráfico = start_date
@@ -223,9 +223,9 @@ for intervalo_simulado in intervalo_simulado_vals:
             }, ignore_index=True)
 
             break_min_vals = [3]
-            lookback_vals = [100]
-            janela_rsi_vals = [14]
-            ordem_vals = [5]
+            lookback_vals = [50]
+            janela_rsi_vals = [49]
+            ordem_vals = [3]
             sl_vals = [0.02]
             pt_vals = [0.05]
             imprime_grafico = True

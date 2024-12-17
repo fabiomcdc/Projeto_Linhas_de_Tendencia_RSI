@@ -1,0 +1,3 @@
+;janela_rsi;ordem;lookback;d_max;num_pontos;break_min;ppt;sl;pt;ativo;return_ann;sharpe_ratio;max_drawdown;trades;Pontos_return_ann;Pontos_sharpe_ratio;Pontos_max_drawdown;Pontos_trades;Pontos_ponderados
+0;42;3;50;1;3;3;6;0,02;0,05;PFE;3,1715741507388393;0,2678963384289373;-22,27128696975241;32,333333333333336;10,0;10,0;10,0;10,0;10,0
+1;42;3;100;1;3;3;6;0,02;0,05;PFE;1,680505584291277;0,1341039280708848;-22,9573089749247;30,333333333333332;0,0;0,0;0,0;0,0;0,0
