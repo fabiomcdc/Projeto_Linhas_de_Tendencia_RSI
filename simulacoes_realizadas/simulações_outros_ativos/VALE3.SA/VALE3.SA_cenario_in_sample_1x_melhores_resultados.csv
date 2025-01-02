@@ -1,0 +1,8 @@
+;ativo;cenario;variavel;melhor_valor;media_de_pontos
+0;VALE3.SA;cenario_in_sample_1x;janela_rsi;42;5,535929825236116
+1;VALE3.SA;cenario_in_sample_1x;ordem;2;5,35791591531541
+2;VALE3.SA;cenario_in_sample_1x;lookback;50;5,051623023486559
+3;VALE3.SA;cenario_in_sample_1x;break_min;2;4,946946609461817
+4;VALE3.SA;cenario_in_sample_1x;num_pontos;2;5,805871834219007
+5;VALE3.SA;cenario_in_sample_1x;sl;0.02;4,801387491790695
+6;VALE3.SA;cenario_in_sample_1x;pt;0.05;4,801387491790695

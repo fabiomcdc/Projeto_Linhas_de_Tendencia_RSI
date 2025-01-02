@@ -1,0 +1,8 @@
+;ativo;cenario;variavel;melhor_valor;media_de_pontos
+0;GSPC;cenario_in_sample_1x;janela_rsi;35;5,453492260915676
+1;GSPC;cenario_in_sample_1x;ordem;2;5,383254341077991
+2;GSPC;cenario_in_sample_1x;lookback;50;6,044823959632215
+3;GSPC;cenario_in_sample_1x;break_min;2;4,656192896491648
+4;GSPC;cenario_in_sample_1x;num_pontos;2;4,534062323148071
+5;GSPC;cenario_in_sample_1x;sl;0.02;4,534062323148071
+6;GSPC;cenario_in_sample_1x;pt;0.05;4,534062323148071

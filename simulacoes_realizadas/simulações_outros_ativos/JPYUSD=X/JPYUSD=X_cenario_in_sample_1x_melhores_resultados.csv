@@ -1,0 +1,8 @@
+;ativo;cenario;variavel;melhor_valor;media_de_pontos
+0;JPYUSD=X;cenario_in_sample_1x;janela_rsi;21;6,1275674048905415
+1;JPYUSD=X;cenario_in_sample_1x;ordem;2;5,502816076407686
+2;JPYUSD=X;cenario_in_sample_1x;lookback;100;5,157940911321371
+3;JPYUSD=X;cenario_in_sample_1x;break_min;2;5,505585454838085
+4;JPYUSD=X;cenario_in_sample_1x;num_pontos;2;5,062644274727651
+5;JPYUSD=X;cenario_in_sample_1x;sl;0.02;5,062644274727651
+6;JPYUSD=X;cenario_in_sample_1x;pt;0.05;5,062644274727651

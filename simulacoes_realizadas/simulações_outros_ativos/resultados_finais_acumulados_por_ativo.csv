@@ -1,0 +1,5 @@
+;d_max;num_pontos;break_min;ppt;sl;pt;ativo;cenario;return_ann;sharpe_ratio;max_drawdown;trades;janela_rsi;ordem;lookback
+0;2;2;2;6;0,01;0,05;^BVSP;Media dos resultados por ativo;23,622255077842645;1,384986299881673;-11,008483096124971;74,0;42;2;50
+0;2;2;2;6;0,01;0,06;^GSPC;Media dos resultados por ativo;16,034369865284546;1,1955362888299206;-10,4270199553808;55,5;35;2;50
+0;2;2;2;6;0,01;0,05;^FTSE;Media dos resultados por ativo;10,73140361484498;0,9571036305666374;-8,695751298881987;61,5;21;2;50
+0;2;2;2;6;0,01;0,05;^IXIC;Media dos resultados por ativo;13,0224270252001;0,8522697323182875;-11,308780069687703;70,5;28;2;50

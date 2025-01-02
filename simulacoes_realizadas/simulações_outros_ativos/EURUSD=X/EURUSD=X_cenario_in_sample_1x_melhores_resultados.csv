@@ -1,0 +1,8 @@
+;ativo;cenario;variavel;melhor_valor;media_de_pontos
+0;EURUSD=X;cenario_in_sample_1x;janela_rsi;28;5,542696066552746
+1;EURUSD=X;cenario_in_sample_1x;ordem;3;4,58710754972568
+2;EURUSD=X;cenario_in_sample_1x;lookback;50;5,012476247647825
+3;EURUSD=X;cenario_in_sample_1x;break_min;3;4,739542628067621
+4;EURUSD=X;cenario_in_sample_1x;num_pontos;2;4,583612667990355
+5;EURUSD=X;cenario_in_sample_1x;sl;0.02;4,583612667990355
+6;EURUSD=X;cenario_in_sample_1x;pt;0.05;4,583612667990355

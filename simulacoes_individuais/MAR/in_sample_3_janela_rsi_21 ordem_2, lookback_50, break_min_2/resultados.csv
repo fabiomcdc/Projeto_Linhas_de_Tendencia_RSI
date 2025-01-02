@@ -1,0 +1,2 @@
+;janela_rsi;ordem;lookback;d_max;num_pontos;break_min;ppt;sl;pt;ind;start_date;end_date;final_balance;return_%;return_ann_%;sharpe_ratio;sortino_ratio;volatility;max_drawdown_%;trades;win_rate_%;profit_factor;avg_trade_return
+0;21;2;50;2;2;2;6;0,02;0,05;4;2016-04-29;2019-09-18;16288517,417637292;62,88517417637293;14,084976955823159;0,9135374347864177;1,5651276992129888;15,418062160874868;-15,513608507815778;52;48,07692307692308;1,9608214845282075;0,942642874378441

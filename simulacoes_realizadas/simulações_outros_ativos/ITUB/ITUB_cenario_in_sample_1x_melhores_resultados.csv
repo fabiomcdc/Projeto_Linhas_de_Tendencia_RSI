@@ -1,0 +1,8 @@
+;ativo;cenario;variavel;melhor_valor;media_de_pontos
+0;ITUB;cenario_in_sample_1x;janela_rsi;49;6,258687403886258
+1;ITUB;cenario_in_sample_1x;ordem;2;5,816184298272285
+2;ITUB;cenario_in_sample_1x;lookback;50;6,008353397701643
+3;ITUB;cenario_in_sample_1x;break_min;2;5,581152925972473
+4;ITUB;cenario_in_sample_1x;num_pontos;2;6,1454807711717425
+5;ITUB;cenario_in_sample_1x;sl;0.02;5,309425386514912
+6;ITUB;cenario_in_sample_1x;pt;0.05;5,309425386514912

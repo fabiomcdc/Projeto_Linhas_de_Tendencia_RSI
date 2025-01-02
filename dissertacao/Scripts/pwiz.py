@@ -1,4 +1,4 @@
-#!C:\Users\User\Dropbox\FGV\Dissertação\Projeto\Lista-2\dissertacao\Scripts\python.exe
+#!C:\Users\User\Dropbox\FGV\Dissertação\Projeto\projeto_linhas_de_tendencia\dissertacao\Scripts\python.exe
 
 import datetime
 import os

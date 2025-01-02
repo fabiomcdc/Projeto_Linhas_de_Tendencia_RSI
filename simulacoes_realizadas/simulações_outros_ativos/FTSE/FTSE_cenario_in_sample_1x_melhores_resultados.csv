@@ -1,0 +1,8 @@
+;ativo;cenario;variavel;melhor_valor;media_de_pontos
+0;FTSE;cenario_in_sample_1x;janela_rsi;21;5,4962233073811175
+1;FTSE;cenario_in_sample_1x;ordem;2;5,646515290862316
+2;FTSE;cenario_in_sample_1x;lookback;50;6,29052675092085
+3;FTSE;cenario_in_sample_1x;break_min;2;4,8477277489034005
+4;FTSE;cenario_in_sample_1x;num_pontos;2;4,624644595660209
+5;FTSE;cenario_in_sample_1x;sl;0.02;4,624644595660209
+6;FTSE;cenario_in_sample_1x;pt;0.05;4,624644595660209

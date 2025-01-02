@@ -1,0 +1,48 @@
+;janela_rsi;ordem;lookback;d_max;num_pontos;break_min;ppt;sl;pt;ativo;;cenario;;;return_ann;sharpe_ratio;;;max_drawdown;trades;;;
+MSFT;21;2;[50, 90];2;2;2;6;0,02;0,05;MSFT;;in_sample_1_1x;;;44,89281558;1,512589415;;;-19,72611075;133;;;
+MSFT;21;2;[50, 90];2;2;2;6;0,02;0,05;MSFT;;in_sample_2_1x;;;22,98682122;0,997197124;;;-15,6008586;127;;;
+MSFT;21;2;[50, 90];2;2;2;6;0,02;0,05;MSFT;;in_sample_3_1x;;;16,30677651;1,076019354;;;-13,66789185;64;;;
+MSFT;;;;;;;;;;;;;;;;;;;;;;;
+MSFT;janela_rsi;ordem;lookback;d_max;num_pontos;break_min;ppt;sl;pt;ind;start_date;end_date;final_balance;return_%;return_ann_%;sharpe_ratio;sortino_ratio;volatility;max_drawdown_%;trades;win_rate_%;profit_factor;avg_trade_return
+MSFT;21;2;50;2;2;2;6;0,02;0,05;2;01/01/2000;19/08/2005;57366460,83;473,6646083;36,49314298;1,249053912;2,972596442;29,21662758;-19,72611136;109;62,3853211;2,428859278;1,615549767
+MSFT;;;;;;;;;;;;;;;;;;;;;;;
+MSFT;janela_rsi;ordem;lookback;d_max;num_pontos;break_min;ppt;sl;pt;ind;start_date;end_date;final_balance;return_%;return_ann_%;sharpe_ratio;sortino_ratio;volatility;max_drawdown_%;trades;win_rate_%;profit_factor;avg_trade_return
+MSFT;21;2;90;2;2;2;6;0,02;0,05;2;01/01/2000;19/08/2005;40165530,27;301,6553027;28,09772051;1,055828251;2,286570902;26,61201809;-25,13442665;97;57,73195876;2,171725461;1,443750962
+MSFT;;;;;;;;;;;;;;;;;;;;;;;
+MSFT;janela_rsi;ordem;lookback;d_max;num_pontos;break_min;ppt;sl;pt;ind;start_date;end_date;final_balance;return_%;return_ann_%;sharpe_ratio;sortino_ratio;volatility;max_drawdown_%;trades;win_rate_%;profit_factor;avg_trade_return
+MSFT;21;2;50;2;2;2;6;0,02;0,05;2;01/01/2008;29/10/2013;30119958,53;201,1995853;20,8529323;0,914200383;1,796804941;22,81002358;-15,42452815;105;56,19047619;1,927687302;1,055631588
+MSFT;;;;;;;;;;;;;;;;;;;;;;;
+MSFT;janela_rsi;ordem;lookback;d_max;num_pontos;break_min;ppt;sl;pt;ind;start_date;end_date;final_balance;return_%;return_ann_%;sharpe_ratio;sortino_ratio;volatility;max_drawdown_%;trades;win_rate_%;profit_factor;avg_trade_return
+MSFT;21;2;90;2;2;2;6;0,02;0,05;2;01/01/2008;29/10/2013;23120959,57;131,2095957;15,48580687;0,699704757;1,167771403;22,13191594;-23,47963327;89;58,42696629;1,694374668;0,94619568
+MSFT;;;;;;;;;;;;;;;;;;;;;;;
+MSFT;janela_rsi;ordem;lookback;d_max;num_pontos;break_min;ppt;sl;pt;ind;start_date;end_date;final_balance;return_%;return_ann_%;sharpe_ratio;sortino_ratio;volatility;max_drawdown_%;trades;win_rate_%;profit_factor;avg_trade_return
+MSFT;21;2;50;2;2;2;6;0,02;0,05;2;29/04/2016;18/09/2019;17503099,46;75,03099463;16,32270451;0,952573468;1,917876416;17,13537596;-16,34814988;61;55,73770492;2,186593934;0,921919827
+MSFT;;;;;;;;;;;;;;;;;;;;;;;
+MSFT;janela_rsi;ordem;lookback;d_max;num_pontos;break_min;ppt;sl;pt;ind;start_date;end_date;final_balance;return_%;return_ann_%;sharpe_ratio;sortino_ratio;volatility;max_drawdown_%;trades;win_rate_%;profit_factor;avg_trade_return
+MSFT;21;2;90;2;2;2;6;0,02;0,05;2;29/04/2016;18/09/2019;12601162,8;26,01162801;6,443845023;0,429721358;0,721069763;14,99540318;-15,81385462;47;40,42553191;1,46654477;0,493136876
+;;;;;;;;;;;;;;;;;;;;;;;
+;janela_rsi;ordem;lookback;d_max;num_pontos;break_min;ppt;sl;pt;ativo;;cenario;;;return_ann;sharpe_ratio;;;max_drawdown;trades;;;
+MAR;21;2;[50, 90];2;2;2;6;0,02;0,05;MAR;;in_sample_1_1x;;;34,63234292;1,22159425;;;-14,71153546;127;;;
+MAR;21;2;[50, 90];2;2;2;6;0,02;0,05;MAR;;in_sample_2_1x;;;44,55802217;1,267098154;;;-14,46643967;143;;;
+MAR;21;2;[50, 90];2;2;2;6;0,02;0,05;MAR;;in_sample_3_1x;;;9,650520235;0,662398077;;;-19,93754197;64;;;
+MAR;;;;;;;;;;;;;;;;;;;;;;;
+MAR;;;;;;;;;;;;;;;;;;;;;;;
+MAR;janela_rsi;ordem;lookback;d_max;num_pontos;break_min;ppt;sl;pt;ind;start_date;end_date;final_balance;return_%;return_ann_%;sharpe_ratio;sortino_ratio;volatility;max_drawdown_%;trades;win_rate_%;profit_factor;avg_trade_return
+MAR;21;2;50;2;2;2;6;0,02;0,05;4;01/01/2000;19/08/2005;35304878,22;253,0487822;25,18863695;0,915506858;1,899326602;27,51332414;-16,45601161;107;57,00934579;1,942309066;1,185889129
+MAR;;;;;;;;;;;;;;;;;;;;;;;
+MAR;janela_rsi;ordem;lookback;d_max;num_pontos;break_min;ppt;sl;pt;ind;start_date;end_date;final_balance;return_%;return_ann_%;sharpe_ratio;sortino_ratio;volatility;max_drawdown_%;trades;win_rate_%;profit_factor;avg_trade_return
+MAR;21;2;90;2;2;2;6;0,02;0,05;4;01/01/2000;19/08/2005;28029455,49;180,2945549;20,14799652;0,821309106;1,63118417;24,53156355;-14,63758979;88;54,54545455;1,911886973;1,178102922
+MAR;;;;;;;;;;;;;;;;;;;;;;;
+MAR;janela_rsi;ordem;lookback;d_max;num_pontos;break_min;ppt;sl;pt;ind;start_date;end_date;final_balance;return_%;return_ann_%;sharpe_ratio;sortino_ratio;volatility;max_drawdown_%;trades;win_rate_%;profit_factor;avg_trade_return
+MAR;21;2;50;2;2;2;6;0,02;0,05;4;01/01/2008;29/10/2013;66763866,04;567,6386604;38,56036756;1,162223037;2,838452399;33,17811328;-17,75574932;126;59,52380952;2,253977346;1,518217375
+MAR;;;;;;;;;;;;;;;;;;;;;;;
+MAR;janela_rsi;ordem;lookback;d_max;num_pontos;break_min;ppt;sl;pt;ind;start_date;end_date;final_balance;return_%;return_ann_%;sharpe_ratio;sortino_ratio;volatility;max_drawdown_%;trades;win_rate_%;profit_factor;avg_trade_return
+MAR;21;2;90;2;2;2;6;0,02;0,05;4;01/01/2008;29/10/2013;52498372,33;424,9837233;32,95541613;1,163044855;2,700176009;28,33546444;-18,30655387;90;64,44444444;2,667027975;1,859519625
+MAR;;;;;;;;;;;;;;;;;;;;;;;
+MAR;janela_rsi;ordem;lookback;d_max;num_pontos;break_min;ppt;sl;pt;ind;start_date;end_date;final_balance;return_%;return_ann_%;sharpe_ratio;sortino_ratio;volatility;max_drawdown_%;trades;win_rate_%;profit_factor;avg_trade_return
+MAR;21;2;50;2;2;2;6;0,02;0,05;4;29/04/2016;18/09/2019;16288517,42;62,88517418;14,08497696;0,913537435;1,565127699;15,41806216;-15,51360851;52;48,07692308;1,960821485;0,942642874
+MAR;;;;;;;;;;;;;;;;;;;;;;;
+MAR;janela_rsi;ordem;lookback;d_max;num_pontos;break_min;ppt;sl;pt;ind;start_date;end_date;final_balance;return_%;return_ann_%;sharpe_ratio;sortino_ratio;volatility;max_drawdown_%;trades;win_rate_%;profit_factor;avg_trade_return
+MAR;21;2;90;2;2;2;6;0,02;0,05;4;29/04/2016;18/09/2019;17621785,58;76,21785584;16,53522288;1,047801697;1,950010717;15,78087048;-16,69341191;46;58,69565217;2,332742295;1,239254398
+MAR;;;;;;;;;;;;;;;;;;;;;;;
+MAR;;;;;;;;;;;;;;;;;;;;;;;

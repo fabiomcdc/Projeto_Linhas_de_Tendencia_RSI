@@ -1,0 +1,2 @@
+;janela_rsi;ordem;lookback;d_max;num_pontos;break_min;ppt;sl;pt;ativo;return_ann;sharpe_ratio;max_drawdown;trades;cenario
+0;21;1;lookback duplo [50, 90];2;2;3;6;0,01;0,05;BEN;49,06118478834186;1,6168025115229683;-18,294730212894127;80,5;Media_dos_resultados_por_ativo

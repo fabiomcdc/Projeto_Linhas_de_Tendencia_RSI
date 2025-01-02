@@ -1,0 +1,8 @@
+;ativo;cenario;variavel;melhor_valor;media_de_pontos
+0;PETR4.SA;cenario_in_sample_1x;janela_rsi;49;5,714709178820964
+1;PETR4.SA;cenario_in_sample_1x;ordem;2;4,7182418134441395
+2;PETR4.SA;cenario_in_sample_1x;lookback;50;4,969812523445246
+3;PETR4.SA;cenario_in_sample_1x;break_min;2;4,487065667262086
+4;PETR4.SA;cenario_in_sample_1x;num_pontos;2;5,369489664970285
+5;PETR4.SA;cenario_in_sample_1x;sl;0.02;4,376445067241257
+6;PETR4.SA;cenario_in_sample_1x;pt;0.05;4,376445067241257

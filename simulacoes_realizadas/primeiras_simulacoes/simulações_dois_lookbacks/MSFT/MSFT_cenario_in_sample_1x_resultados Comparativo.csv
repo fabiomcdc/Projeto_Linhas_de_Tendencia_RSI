@@ -1,0 +1,16 @@
+;janela_rsi;ordem;lookback;d_max;num_pontos;break_min;ppt;sl;pt;ativo;;cenario;;;return_ann;sharpe_ratio;max_drawdown;trades;;;;;
+0;21;2;[50, 90];2;2;2;6;0,02;0,05;MSFT;;in_sample_1_1x;;;44,89281558;1,512589415;-19,72611075;133;;;;;
+2;21;2;[50, 90];2;2;2;6;0,02;0,05;MSFT;;in_sample_2_1x;;;22,98682122;0,997197124;-15,6008586;127;;;;;
+4;21;2;[50, 90];2;2;2;6;0,02;0,05;MSFT;;in_sample_3_1x;;;16,30677651;1,076019354;-13,66789185;64;;;;;
+;;;;;;;;;;;;;;;;;;;;;;;
+;janela_rsi;ordem;lookback;d_max;num_pontos;break_min;ppt;sl;pt;ind;start_date;end_date;final_balance;return_%;return_ann_%;sharpe_ratio;sortino_ratio;volatility;max_drawdown_%;trades;win_rate_%;profit_factor;avg_trade_return
+;21;2;50;2;2;2;6;0,02;0,05;2;01/01/2000;19/08/2005;57366460,83;473,6646083;36,49314298;1,249053912;2,972596442;29,21662758;-19,72611136;109;62,3853211;2,428859278;1,615549767
+;;;;;;;;;;;;;;;;;;;;;;;
+;janela_rsi;ordem;lookback;d_max;num_pontos;break_min;ppt;sl;pt;ind;start_date;end_date;final_balance;return_%;return_ann_%;sharpe_ratio;sortino_ratio;volatility;max_drawdown_%;trades;win_rate_%;profit_factor;avg_trade_return
+;21;2;90;2;2;2;6;0,02;0,05;2;01/01/2000;19/08/2005;40165530,27;301,6553027;28,09772051;1,055828251;2,286570902;26,61201809;-25,13442665;97;57,73195876;2,171725461;1,443750962
+;;;;;;;;;;;;;;;;;;;;;;;
+;janela_rsi;ordem;lookback;d_max;num_pontos;break_min;ppt;sl;pt;ind;start_date;end_date;final_balance;return_%;return_ann_%;sharpe_ratio;sortino_ratio;volatility;max_drawdown_%;trades;win_rate_%;profit_factor;avg_trade_return
+;21;2;50;2;2;2;6;0,02;0,05;2;01/01/2008;29/10/2013;30119958,53;201,1995853;20,8529323;0,914200383;1,796804941;22,81002358;-15,42452815;105;56,19047619;1,927687302;1,055631588
+;;;;;;;;;;;;;;;;;;;;;;;
+;janela_rsi;ordem;lookback;d_max;num_pontos;break_min;ppt;sl;pt;ind;start_date;end_date;final_balance;return_%;return_ann_%;sharpe_ratio;sortino_ratio;volatility;max_drawdown_%;trades;win_rate_%;profit_factor;avg_trade_return
+;21;2;90;2;2;2;6;0,02;0,05;2;01/01/2008;29/10/2013;23120959,57;131,2095957;15,48580687;0,699704757;1,167771403;22,13191594;-23,47963327;89;58,42696629;1,694374668;0,94619568

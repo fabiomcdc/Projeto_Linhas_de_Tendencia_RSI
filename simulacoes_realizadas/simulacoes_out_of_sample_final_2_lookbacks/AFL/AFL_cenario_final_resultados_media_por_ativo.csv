@@ -1,0 +1,2 @@
+;janela_rsi;ordem;lookback;d_max;num_pontos;break_min;ppt;sl;pt;ativo;return_ann;sharpe_ratio;max_drawdown;trades;cenario
+0;21;1;lookback duplo [70, 110];2;2;3;6;0,03;0,05;AFL;19,071726599460238;0,9694328458030963;-14,876944356118338;53,5;Media_dos_resultados_por_ativo
